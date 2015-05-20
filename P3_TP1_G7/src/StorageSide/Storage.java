@@ -1,0 +1,106 @@
+package StorageSide;
+
+/**
+ * This class is responsible to host the Storage
+ *
+ * @author Daniel 51908
+ * @author Raphael 64044
+ * @version 3.0
+ */
+public class Storage implements StorageInterface {
+
+    /**
+     * Present number of Prime Materials in Storage.
+     *
+     * @serial nPrimeMaterialsInStorage
+     */
+    private int nPrimeMaterialsInStorage;
+
+    /**
+     * Maximum number of Prime Materials available to be delivered to the factory.
+     *
+     * @serial nMaxPrimeMaterialsToDeliver
+     */
+    private final int nMaxPrimeMaterialsToDeliver;
+
+    /**
+     * Number of Prime Materials delivered to the factory.
+     *
+     * @serial nPrimeMaterialsDelivered
+     */
+    private int nPrimeMaterialsDelivered;
+
+    /**
+     * Number of prime materials that the owner can carry.
+     *
+     * @serial nPrimeOwnerCarry
+     */
+    private final int nPrimeOwnerCarry;
+
+    /**
+     * Create monitor of the storage.
+     *
+     * @param nInitialPrimeMaterialsInStorage Number of prime materials at the beginning
+     * @param nPrimeOwnerCarry Number of prime materials that the owner can carry
+     */
+    public Storage(int nInitialPrimeMaterialsInStorage, int nPrimeOwnerCarry){
+        nPrimeMaterialsInStorage = nInitialPrimeMaterialsInStorage;
+        nMaxPrimeMaterialsToDeliver = nInitialPrimeMaterialsInStorage;
+        this.nPrimeOwnerCarry = nPrimeOwnerCarry;
+        nPrimeMaterialsDelivered = 0;
+    }
+
+    /**
+     * Get the number of prime materials already delivered.
+     *
+     * @return number of prime materials delivered
+     */
+    @Override
+    public int getnPrimeMaterialsDelivered(){
+        return nPrimeMaterialsDelivered;
+    }
+
+    /**
+     * See if the storage has prime materials.
+     *
+     * @return true if the storage has prime materials
+     */
+    @Override
+    public boolean isPrimeMaterialsAvailabe(){
+        return nPrimeMaterialsInStorage > 0;
+    }
+
+    /**
+     * Owner visit suppliers and get some prime materials to be delivered in the factory. If the
+     * storage has more or the same prime materials than the number of prime materials that the
+     * Owner can carry, the Owner collects all prime materials he can. If the storage has less than
+     * the number of prime materials that the Owner can carry, he collects the prime materials
+     * available.
+     *
+     * @return Number of prime materials collected
+     */
+    @Override
+    public synchronized int visitSuppliers(){
+        int primeMaterials;
+        if (nPrimeMaterialsInStorage >= nPrimeOwnerCarry){
+            primeMaterials = nPrimeOwnerCarry;
+        } else{
+            primeMaterials = nPrimeMaterialsInStorage;
+        }
+        nPrimeMaterialsInStorage -= primeMaterials;
+        nPrimeMaterialsDelivered += primeMaterials;
+
+        return primeMaterials;
+    }
+
+    /**
+     * Get the amount of prime materials that the owner should collect during the experience.
+     *
+     * @return number of prime materials to deliver
+     */
+    @Override
+    public int getnMaxPrimeMaterialsToDeliver(){
+        return nMaxPrimeMaterialsToDeliver;
+    }
+
+}

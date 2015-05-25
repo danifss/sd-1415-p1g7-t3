@@ -1,1 +1,1 @@
-java craftmanSide.CraftmanMain $1 $2
+java CraftmanSide.CraftmanMain

@@ -1,1 +1,1 @@
-java customerSide.CustomerMain $1 $2
+java CustomerSide.CustomerMain

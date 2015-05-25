@@ -1,23 +1,15 @@
-package CraftmanSide;
+package StorageSide;
 
 import java.util.Scanner;
-
 
 /**
  * @author Daniel 51908
  * @author Raphael 64044
  * @version 3.0
  */
-public class CraftmanMain {
+public class ServerStorage {
     public static void main(String[] args){
-        /**
-         * TODO: obter o objeto Repository, o objeto Shop e o objeto Factory por RMI usando o 
-         * host e o port que vem por argumento.
-         * 
-         * Iniciar os craftmans.
-         */
-        
-        /* get location of the generic registry service */
+        /* get location of the registry service */
         Scanner in = new Scanner(System.in);
         String rmiRegHostName;
         int rmiRegPortNumb;
@@ -27,5 +19,4 @@ public class CraftmanMain {
         System.out.print("Número do port de escuta do serviço de registo? ");
         rmiRegPortNumb = in.nextInt();
     }
-    
 }

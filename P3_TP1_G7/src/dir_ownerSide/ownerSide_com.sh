@@ -1,1 +1,1 @@
-java OwnerSide.OwnerMain $1 $2
+java OwnerSide.OwnerMain

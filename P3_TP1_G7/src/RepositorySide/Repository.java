@@ -1,5 +1,6 @@
 package RepositorySide;
 
+import Interfaces.RepositoryInterface;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;

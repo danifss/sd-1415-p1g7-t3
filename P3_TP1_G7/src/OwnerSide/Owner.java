@@ -4,6 +4,7 @@ import Interfaces.RepositoryInterface;
 import Interfaces.ShopInterface;
 import Interfaces.FactoryInterface;
 import Interfaces.StorageInterface;
+import java.rmi.RemoteException;
 
 /**
  * This class is responsible to host the Owner
@@ -103,7 +104,7 @@ public class Owner extends Thread implements OwnerInterface {
      * Life cycle of the Owner.
      */
     @Override
-    public void run(){
+    public void run() {
         System.out.println("Iniciado o Owner.");
 
         shop.openTheDoor(); // Owner needs to open the shop before he starts working
@@ -277,8 +278,8 @@ public class Owner extends Thread implements OwnerInterface {
         }
         setOwnerState(COLLECTING_A_BATCH_OF_PRODUCTS);
 
-        shop.goToWorkshopShop();
-        int products = factory.goToWorkshopFactory();
+        shop.goToWorkshop();
+        int products = factory.goToWorkshop();
 
         shop.addnGoodsInDisplay(products);
     }
@@ -286,17 +287,23 @@ public class Owner extends Thread implements OwnerInterface {
     /**
      * Owner goes to the storage to collect some prime materials.
      */
-    private void visitSuppliers(){
+    private void visitSuppliers() {
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
         }
         setOwnerState(BUYING_PRIME_MATERIALS);
 
-        if (storage.isPrimeMaterialsAvailabe()){
-            nPrimeMaterials = storage.visitSuppliers();
-        } else{
-            nPrimeMaterials = 0;
+        try {
+            if (storage.isPrimeMaterialsAvailabe()){
+                nPrimeMaterials = storage.visitSuppliers();
+            } else{
+                nPrimeMaterials = 0;
+            }
+        } catch(RemoteException e) {
+            System.out.println("RMI Owner visitSuppliers exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
         }
     }
 
@@ -322,8 +329,8 @@ public class Owner extends Thread implements OwnerInterface {
         } catch (InterruptedException e){
         }
         setOwnerState(DELIVERING_PRIME_MATERIALS);
-        shop.replenishStockShop();
-        factory.replenishStockFactory(nPrimeMaterials);
+        shop.replenishStock();
+        factory.replenishStock(nPrimeMaterials);
         nPrimeMaterials = 0;
     }
 

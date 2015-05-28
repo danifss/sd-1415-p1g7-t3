@@ -1,5 +1,6 @@
 package FactorySide;
 
+import Interfaces.FactoryInterface;
 import Interfaces.RepositoryInterface;
 
 /**

@@ -147,7 +147,7 @@ public class Customer extends Thread implements CustomerInterface {
             sleep((long) (20));
         } catch (InterruptedException e){
         }
-        return shop.isDoorOpen(customerId);
+        return shop.isDoorOpen();
     }
 
     /**
@@ -174,7 +174,7 @@ public class Customer extends Thread implements CustomerInterface {
             sleep((long) (20));
         } catch (InterruptedException e){
         }
-        shop.enterShop(customerId);
+        shop.enterShop();
         setCustomerState(APPRAISING_OFFER_IN_DISPLAY);
     }
 
@@ -189,7 +189,7 @@ public class Customer extends Thread implements CustomerInterface {
         } catch (InterruptedException e){
         }
 
-        nProductsCustomer = shop.perusingAround(customerId);
+        nProductsCustomer = shop.perusingAround();
     }
 
     /**
@@ -217,7 +217,7 @@ public class Customer extends Thread implements CustomerInterface {
             sleep((long) (100 + 25 * Math.random()));
         } catch (InterruptedException e){
         }
-        shop.exitShop(customerId);
+        shop.exitShop();
         setCustomerState(CARRYING_OUT_DAILY_CHORES);
     }
 
@@ -229,7 +229,7 @@ public class Customer extends Thread implements CustomerInterface {
      * @return true if needs to stop
      */
     private boolean endOper(){
-        return shop.endOper(customerId) && customerState == CARRYING_OUT_DAILY_CHORES;
+        return shop.endOper() && customerState == CARRYING_OUT_DAILY_CHORES;
     }
 
     /**

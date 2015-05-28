@@ -15,9 +15,8 @@ public interface FactoryInterface extends Remote {
      * flagNProductsCall to tell that the Owner needs to come to the Factory flagNProductsCall times
      * to collect products.
      *
-     * @param craftmanId id
      */
-    void batchReadyForTransferFactory(int craftmanId);
+    void batchReadyForTransfer();
 
     /**
      * The Craftman verifies if he needs to contact the owner to collect products. Checks if the
@@ -25,10 +24,9 @@ public interface FactoryInterface extends Remote {
      * collect is different of flagNProductsCall (integer division). He also checks if he made the
      * last product. If one of the conditions are true, he needs to contact the Owner.
      *
-     * @param craftmanId id
      * @return true if he needs to contact
      */
-    boolean checkContactProduct(int craftmanId);
+    boolean checkContactProduct();
 
     /**
      * The Craftman checks if the Factory has prime materials to collect. If the number of prime
@@ -37,10 +35,9 @@ public interface FactoryInterface extends Remote {
      * all prime materials were already supplied, the Craftman will not wait and he will stop
      * working
      *
-     * @param craftmanId id
      * @return true if has materials
      */
-    boolean checkForMaterials(int craftmanId);
+    boolean checkForMaterials();
 
     /**
      * Check if the Craftman needs to contact owner to bring prime materials. The Craftman needs to
@@ -49,65 +46,58 @@ public interface FactoryInterface extends Remote {
      * materials supplied is less than the total number of prime materials available in the storage
      * at the beginning.
      *
-     * @param craftmanId id
      * @return true if needs to restock
      */
-    boolean checkForRestock(int craftmanId);
+    boolean checkForRestock();
 
     /**
      * The Craftman collects prime materials. He checks again if there is prime materials (to avoid
      * that someone before him already took his prime materials), and then he collects, decreasing
      * the number of pieces collected in the number of prime materials available in the Factory.
      *
-     * @param craftmanId id
      * @return number of collected prime materials
      */
-    int collectMaterials(int craftmanId);
+    int collectMaterials();
 
     /**
      * Checks if the all the prime materials from the storage were supplied. This function helps the
      * Craftman to know if he can stop working.
      *
-     * @param craftmanId id
      * @return true if there is no more prime materials in the storage
      */
-    boolean endOfPrimeMaterials(int craftmanId);
+    boolean endOfPrimeMaterials();
 
     /**
      * The Craftman sees if someone already contacted the owner to restock prime materials.
      *
-     * @param craftmanId id
      * @return true if someone already contacted the owner
      */
-    boolean flagPrimeActivated(int craftmanId);
+    boolean flagPrimeActivated();
 
     /**
      * Craftman sees how many prime materials needs to produce a new product
      *
-     * @param craftmanId id
      * @return number of prime materials needed per products
      */
-    int getnPrimePerProduct(int craftmanId);
+    int getnPrimePerProduct();
 
     /**
      * The Craftman stores the products produced. The Craftman adds the number of products produced
      * that he has at the moment to the number of finished products in the Factory and to the number
      * of the total products produced.
      *
-     * @param craftmanId id
      * @param nProd Number of products that the Craftman has
      * @return number of products the Craftman stored
      */
-    int goToStore(int craftmanId, int nProd);
+    int goToStore(int nProd);
 
     /**
      * The Craftman turns true the flag that indicates that prime materials are needed. He also
      * ensure that none of the Craftmans already contacted the Owner.
      *
-     * @param craftmanId id
      * @return true if he contacted the owner
      */
-    boolean primeMaterialsNeededFactory(int craftmanId);
+    boolean primeMaterialsNeeded();
 
     // OWNER
     /**
@@ -116,7 +106,7 @@ public interface FactoryInterface extends Remote {
      *
      * @param nPrimeMaterials Amount of prime materials to restock
      */
-    void replenishStockFactory(int nPrimeMaterials);
+    void replenishStock(int nPrimeMaterials);
 
     /**
      * Owner goes to factory to collect finished products. If he can collect all the products
@@ -127,5 +117,5 @@ public interface FactoryInterface extends Remote {
      *
      * @return number of products collected
      */
-    int goToWorkshopFactory();
+    int goToWorkshop();
 }

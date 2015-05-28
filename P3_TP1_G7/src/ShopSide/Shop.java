@@ -1,6 +1,7 @@
 package ShopSide;
 
 import Interfaces.RepositoryInterface;
+import Interfaces.ShopInterface;
 
 /**
  * This class is responsible to host the Shop

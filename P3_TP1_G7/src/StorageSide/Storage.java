@@ -1,5 +1,7 @@
 package StorageSide;
 
+import Interfaces.StorageInterface;
+
 /**
  * This class is responsible to host the Storage
  *
@@ -49,16 +51,7 @@ public class Storage implements StorageInterface {
         this.nPrimeOwnerCarry = nPrimeOwnerCarry;
         nPrimeMaterialsDelivered = 0;
     }
-
-    /**
-     * Get the number of prime materials already delivered.
-     *
-     * @return number of prime materials delivered
-     */
-    @Override
-    public int getnPrimeMaterialsDelivered(){
-        return nPrimeMaterialsDelivered;
-    }
+    
 
     /**
      * See if the storage has prime materials.
@@ -98,9 +91,17 @@ public class Storage implements StorageInterface {
      *
      * @return number of prime materials to deliver
      */
-    @Override
     public int getnMaxPrimeMaterialsToDeliver(){
         return nMaxPrimeMaterialsToDeliver;
+    }
+    
+    /**
+     * Get the number of prime materials already delivered.
+     *
+     * @return number of prime materials delivered
+     */
+    public int getnPrimeMaterialsDelivered(){
+        return nPrimeMaterialsDelivered;
     }
 
 }

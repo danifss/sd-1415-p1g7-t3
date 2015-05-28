@@ -15,34 +15,30 @@ public interface ShopInterface extends Remote {
      * The Craftman indicates that the Owner can go to factory to collect products. He changes the
      * flag and wakes up the Owner.
      *
-     * @param craftmanId id
      */
-    void batchReadyForTransferShop(int craftmanId);
+    void batchReadyForTransfer();
 
     /**
      * The Craftman indicates that prime materials is needed in the Factory. He changes the flag and
      * wakes up the Owner.
      *
-     * @param craftmanId id
      */
-    void primeMaterialsNeededShop(int craftmanId);
+    void primeMaterialsNeeded();
 
     // CUSTOMER
     /**
      * The customer enters the shop.
      *
-     * @param customerId id
      */
-    void enterShop(int customerId);
+    void enterShop();
 
     /**
      * The Customer leaves the Shop. If he his the last one leaving the Shop, wakes up the Owner
      * (important to Owner finish working, if he his waiting for all the Customers to buy products,
      * but the last one don't buy anything).
      *
-     * @param customerId id
      */
-    void exitShop(int customerId);
+    void exitShop();
 
     /**
      * The Customer goes to the queue, and waits till the owner call him. When the owner calls a
@@ -56,31 +52,28 @@ public interface ShopInterface extends Remote {
     /**
      * The Customer sees if the door is open
      *
-     * @param customerId id
      * @return True if the shop is OPEN
      */
-    boolean isDoorOpen(int customerId);
+    boolean isDoorOpen();
 
     /**
      * The Customer is perusing around. A random number is generated, then if it is less than 0.5
      * and exists goods to buy, that number*100 is divided by the number of goods for sell and
      * returns his remainder.
      *
-     * @param customerId id
      * @return number of goods to buy
      */
-    int perusingAround(int customerId);
-
-    /**
-     * See if the owner and the customer can stop. Checks if all products have been transferred to
-     * Shop, and all the products are sold.
-     *
-     * @param customerId id
-     * @return true if they can stop working
-     */
-    boolean endOper(int customerId);
+    int perusingAround();
+    
 
     // OWNER
+    /**
+     * Set present Shop state.
+     *
+     * @param state State of the Shop
+     */
+    void setShopState(int state);
+    
     /**
      * Owner opens the door. The state of the Shop is changed to OPEN.
      */
@@ -123,6 +116,13 @@ public interface ShopInterface extends Remote {
      * @return true if the number of Customers inside the shop is greater than 0
      */
     boolean customersInTheShop();
+    
+    /**
+     * See if the Queue has customers.
+     *
+     * @return true if the queue has customers
+     */
+    boolean customerInTheQueue();
 
     /**
      * The Owner address a Customer on the queue. The owner wakes up the first Customer in the
@@ -146,6 +146,13 @@ public interface ShopInterface extends Remote {
      * queue.
      */
     void sayGoodByeToCustomer();
+    
+    /**
+     * Remove Customer from queue.
+     *
+     * @param customerId id
+     */
+    void removeSitCustomer(int customerId);
 
     /**
      * See if the shop is on state STILL_OPEN.
@@ -157,7 +164,7 @@ public interface ShopInterface extends Remote {
     /**
      * The owner goes to the Factory to collect products.
      */
-    void goToWorkshopShop();
+    void goToWorkshop();
 
     /**
      * Update the number of products that the shop is selling.
@@ -169,7 +176,7 @@ public interface ShopInterface extends Remote {
     /**
      * Owner goes to Factory to restock prime materials.
      */
-    void replenishStockShop();
+    void replenishStock();
 
     /**
      * See if the owner and the customer can stop. Checks if all products have been transferred to

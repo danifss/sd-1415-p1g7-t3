@@ -35,13 +35,6 @@ public interface RepositoryInterface extends Remote {
      */
     void setCustomerState(int customerId, int state);
 
-    /**
-     * Set number of customers inside.
-     *
-     * @param customerId id
-     * @param nCustomersInsideShop Number of customers inside
-     */
-    void setnCustomersInsideShop(int customerId, int nCustomersInsideShop);
 
     /**
      * Set number of goods (accumulation) bought by the customer.
@@ -137,21 +130,21 @@ public interface RepositoryInterface extends Remote {
      *
      * @return number of prime materials to deliver
      */
-    int getnMaxPrimeMaterialsToDeliver();
+    //int getnMaxPrimeMaterialsToDeliver();
 
     /**
      * Get the number of prime materials already delivered.
      *
      * @return number of prime materials delivered
      */
-    int getnPrimeMaterialsDelivered();
+    //int getnPrimeMaterialsDelivered();
 
     /**
      * See if the storage has prime materials.
      *
      * @return true if the storage has prime materials
      */
-    boolean isPrimeMaterialsAvailabe();
+    //boolean isPrimeMaterialsAvailabe();
 
     /**
      * Owner visit suppliers and get some prime materials to be delivered in the factory. If the
@@ -162,6 +155,6 @@ public interface RepositoryInterface extends Remote {
      *
      * @return Number of prime materials collected
      */
-    int visitSuppliers();
+    //int visitSuppliers();
 
 }

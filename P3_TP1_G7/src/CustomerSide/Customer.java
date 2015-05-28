@@ -70,7 +70,7 @@ public class Customer extends Thread implements CustomerInterface {
      * @param customerId customer identification
      * @param shop Shop
      */
-    public Customer(RepositoryInterface sharedInfo, int customerId, ShopInterface shop){
+    public Customer(int customerId, RepositoryInterface sharedInfo, ShopInterface shop){
         this.sharedInfo = sharedInfo;
         this.customerId = customerId;
         this.shop = shop;

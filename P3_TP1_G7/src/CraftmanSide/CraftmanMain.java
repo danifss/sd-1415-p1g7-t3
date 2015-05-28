@@ -1,5 +1,8 @@
 package CraftmanSide;
 
+import Interfaces.FactoryInterface;
+import Interfaces.RepositoryInterface;
+import Interfaces.ShopInterface;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -31,9 +34,11 @@ public class CraftmanMain {
         System.out.print("Número do port de escuta do serviço de registo? ");
         rmiRegPortNumb = in.nextInt();
         
+        System.out.print("Numero de Craftmans? ");
+        int nCraftmans = in.nextInt();
+        
         /* look for the remote object by name in the remote host registry */
-        String nameEntry = "FactoryInterface";
-        Craftman craftman = null;
+        String nameEntry;
         Registry registry = null;
 
         try{
@@ -44,19 +49,60 @@ public class CraftmanMain {
             System.exit(1);
         }
         
+        // Get Repository object
+        nameEntry = "RepositoryInterface";
+        RepositoryInterface repository = null;
         try{
-            craftman = (Craftman) registry.lookup(nameEntry);
+            repository = (RepositoryInterface) registry.lookup(nameEntry);
         } catch (RemoteException e){
-            System.out.println("Craftman look up exception: " + e.getMessage());
+            System.out.println("Repository look up exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e){
-            System.out.println("Craftman not bound exception: " + e.getMessage());
+            System.out.println("Repository not bound exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
+        // Get Shop object
+        nameEntry = "ShopInterface";
+        ShopInterface shop = null;
+        try{
+            shop = (ShopInterface) registry.lookup(nameEntry);
+        } catch (RemoteException e){
+            System.out.println("Shop look up exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        } catch (NotBoundException e){
+            System.out.println("Shop not bound exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
+        // Get Factory object
+        nameEntry = "FactoryInterface";
+        FactoryInterface factory = null;
+        try{
+            factory = (FactoryInterface) registry.lookup(nameEntry);
+        } catch (RemoteException e){
+            System.out.println("Factory look up exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        } catch (NotBoundException e){
+            System.out.println("Factory not bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
         
         
+        Craftman[] craftman = new Craftman[nCraftmans];
+        //Initialization of Craftmans
+        for (int i = 0; i < nCraftmans; i++)
+            craftman[i] = new Craftman(i, factory, shop, repository);
+        
+        // Starting Craftmans
+        for (int i = 0; i < nCraftmans; i++)
+            craftman[i].start();
     }
     
 }

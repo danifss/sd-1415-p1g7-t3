@@ -1,6 +1,7 @@
 package Interfaces;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  * @author Daniel 51908
@@ -16,7 +17,7 @@ public interface RepositoryInterface extends Remote {
      * @param craftmanId Craftman id
      * @param state State of the Craftman
      */
-    void setCraftmanState(int craftmanId, int state);
+    void setCraftmanState(int craftmanId, int state) throws RemoteException;
 
     /**
      * Change the number of products (accumulation) manufactured by the craftsman[i].
@@ -24,7 +25,7 @@ public interface RepositoryInterface extends Remote {
      * @param craftmanId Craftman id
      * @param nGoodsCraftedByCraftman total number of the products crafted by the Craftman
      */
-    void setnGoodsCraftedByCraftman(int craftmanId, int nGoodsCraftedByCraftman);
+    void setnGoodsCraftedByCraftman(int craftmanId, int nGoodsCraftedByCraftman) throws RemoteException;
 
     // CUSTOMER
     /**
@@ -33,7 +34,7 @@ public interface RepositoryInterface extends Remote {
      * @param customerId Customer id
      * @param state State of the Customer
      */
-    void setCustomerState(int customerId, int state);
+    void setCustomerState(int customerId, int state)  throws RemoteException;
 
 
     /**
@@ -42,7 +43,7 @@ public interface RepositoryInterface extends Remote {
      * @param customerId Customer id
      * @param nGoods Number of goods bought by the customer
      */
-    void setnGoodsByCustomer(int customerId, int nGoods);
+    void setnGoodsByCustomer(int customerId, int nGoods) throws RemoteException;
 
     // OWNER
     /**
@@ -50,7 +51,7 @@ public interface RepositoryInterface extends Remote {
      *
      * @param state State of the Owner
      */
-    void setOwnerState(int state);
+    void setOwnerState(int state) throws RemoteException;
 
     // SHOP
     /**
@@ -58,35 +59,35 @@ public interface RepositoryInterface extends Remote {
      *
      * @param tranfsProductsToShop Boolean indicating if the Craftman requested
      */
-    void setTranfsProductsToShop(boolean tranfsProductsToShop);
+    void setTranfsProductsToShop(boolean tranfsProductsToShop) throws RemoteException;
 
     /**
      * Set number of goods in display.
      *
      * @param nGoodsInDisplay Number of goods in display
      */
-    void setnGoodsInDisplay(int nGoodsInDisplay);
+    void setnGoodsInDisplay(int nGoodsInDisplay) throws RemoteException;
 
     /**
      * Set if the craftsman requested the supply of prime materials to the Factory.
      *
      * @param supplyMaterialsToFactory Boolean indicating if the Craftman requested
      */
-    void setSupplyMaterialsToFactory(boolean supplyMaterialsToFactory);
+    void setSupplyMaterialsToFactory(boolean supplyMaterialsToFactory) throws RemoteException;
 
     /**
      * Set number of customers inside.
      *
      * @param nCustomersInsideShop Number of customers inside
      */
-    void setnCustomersInsideShop(int nCustomersInsideShop);
+    void setnCustomersInsideShop(int nCustomersInsideShop) throws RemoteException;
 
     /**
      * Set Shop State.
      *
      * @param state State of the shop
      */
-    void setShopState(int state);
+    void setShopState(int state) throws RemoteException;
 
     // FACTORY
     /**
@@ -94,35 +95,35 @@ public interface RepositoryInterface extends Remote {
      *
      * @param nPrimeMaterialsInFactory Amount of prime materials available in the Factory
      */
-    void setnPrimeMaterialsInFactory(int nPrimeMaterialsInFactory);
+    void setnPrimeMaterialsInFactory(int nPrimeMaterialsInFactory) throws RemoteException;
 
     /**
      * Change the number of finished products presently in the Factory.
      *
      * @param nFinishedProductsInFactory Number of finished products in the Factory
      */
-    void setnFinishedProductsInFactory(int nFinishedProductsInFactory);
+    void setnFinishedProductsInFactory(int nFinishedProductsInFactory) throws RemoteException;
 
     /**
      * Change the total number of products that have already been manufactured (accumulation).
      *
      * @param nProductsManufactured Total number of products produced
      */
-    void setnProductsManufactured(int nProductsManufactured);
+    void setnProductsManufactured(int nProductsManufactured) throws RemoteException;
 
     /**
      * Change the number of times that a supply of prime materials was delivered to the Factory.
      *
      * @param nSuppliedTimes Number of times that the owner delivered prime materials
      */
-    void setnSuppliedTimes(int nSuppliedTimes);
+    void setnSuppliedTimes(int nSuppliedTimes) throws RemoteException;
 
     /**
      * Change the total amount of prime materials that have already been supplied (accumulation).
      *
      * @param nPrimeMaterialsSupplied Number of prime materials supplied
      */
-    void setnPrimeMaterialsSupplied(int nPrimeMaterialsSupplied);
+    void setnPrimeMaterialsSupplied(int nPrimeMaterialsSupplied) throws RemoteException;
 
     // STORAGE
     /**

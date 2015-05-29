@@ -1,6 +1,6 @@
 package ShopSide;
 
-import Interfaces.Register;
+import Interfaces.RegisterInterface;
 import Interfaces.RepositoryInterface;
 import Interfaces.ShopInterface;
 import Registry.Configurations;
@@ -86,10 +86,10 @@ public class ServerShop {
         /* register it with the general registry service */
         String nameEntryBase = "RegisterHandler";
         String nameEntryObject = "Shop";
-        Register reg = null;
+        RegisterInterface reg = null;
 
         try{
-            reg = (Register) registry.lookup(nameEntryBase);
+            reg = (RegisterInterface) registry.lookup(nameEntryBase);
         } catch (RemoteException e){
             System.out.println("RegisterRemoteObject lookup exception: " + e.getMessage());
             e.printStackTrace();

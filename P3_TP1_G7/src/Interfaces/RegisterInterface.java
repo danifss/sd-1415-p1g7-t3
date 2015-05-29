@@ -9,6 +9,9 @@ import java.rmi.RemoteException;
  * @author Daniel 51908
  * @author Raphael 64044
  * @version 3.0
+ *
+ * This data type defines the operational interface of a remote object of type RegisterRemoteObject.
+ * It provides the functionality to register remote objects in the local registry service.
  */
 public interface RegisterInterface extends Remote {
 
@@ -22,7 +25,19 @@ public interface RegisterInterface extends Remote {
      * with the registry service fails
      * @throws AlreadyBoundException if the name is already in use
      */
-    void bind(String name, Remote ref) throws RemoteException, AlreadyBoundException;
+
+    public void bind(String name, Remote ref) throws RemoteException, AlreadyBoundException;
+
+    /**
+     * Removes the binding for the specified name in this registry.
+     *
+     * @param name the name associated with the remote reference
+     *
+     * @throws RemoteException if either the invocation of the remote method, or the communication
+     * with the registry service fails
+     * @throws NotBoundException if the name is not in use
+     */
+    public void unbind(String name) throws RemoteException, NotBoundException;
 
     /**
      * Replaces the binding for the specified name in this registry with the supplied remote
@@ -34,17 +49,5 @@ public interface RegisterInterface extends Remote {
      * @throws RemoteException if either the invocation of the remote method, or the communication
      * with the registry service fails
      */
-    void rebind(String name, Remote ref) throws RemoteException;
-
-    /**
-     * Removes the binding for the specified name in this registry.
-     *
-     * @param name the name associated with the remote reference
-     *
-     * @throws RemoteException if either the invocation of the remote method, or the communication
-     * with the registry service fails
-     * @throws NotBoundException if the name is not in use
-     */
-    void unbind(String name) throws RemoteException, NotBoundException;
-
+    public void rebind(String name, Remote ref) throws RemoteException;
 }

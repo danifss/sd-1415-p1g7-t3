@@ -1,6 +1,6 @@
 package StorageSide;
 
-import Interfaces.Register;
+import Interfaces.RegisterInterface;
 import Interfaces.StorageInterface;
 import Registry.Configurations;
 import java.rmi.AlreadyBoundException;
@@ -70,10 +70,10 @@ public class ServerStorage {
         /* register it with the general registry service */
         String nameEntryBase = "RegisterHandler";
         String nameEntryObject = "Storage";
-        Register reg = null;
+        RegisterInterface reg = null;
 
         try{
-            reg = (Register) registry.lookup(nameEntryBase);
+            reg = (RegisterInterface) registry.lookup(nameEntryBase);
         } catch (RemoteException e){
             System.out.println("RegisterRemoteObject lookup exception: " + e.getMessage());
             e.printStackTrace();

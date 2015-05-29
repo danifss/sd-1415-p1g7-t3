@@ -1,10 +1,15 @@
 package FactorySide;
 
+import Interfaces.FactoryInterface;
+import Interfaces.Register;
 import Interfaces.RepositoryInterface;
+import Registry.Configurations;
+import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 
 /**
@@ -15,14 +20,14 @@ import java.util.Scanner;
 public class ServerFactory {
     public static void main(String[] args){
         /* get location of the registry service */
-        Scanner in = new Scanner(System.in);
-        String rmiRegHostName;
-        int rmiRegPortNumb;
+//        Scanner in = new Scanner(System.in);
+        String rmiRegHostName = Configurations.RMIREGHOSTNAME;
+        int rmiRegPortNumb = Configurations.RMIREGPORTNUMB;
 
-        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
-        rmiRegHostName = in.nextLine();
-        System.out.print("Número do port de escuta do serviço de registo? ");
-        rmiRegPortNumb = in.nextInt();
+//        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
+//        rmiRegHostName = in.nextLine();
+//        System.out.print("Número do port de escuta do serviço de registo? ");
+//        rmiRegPortNumb = in.nextInt();
         
         
         /* create and install the security manager */
@@ -33,7 +38,6 @@ public class ServerFactory {
         
         
         /* look for the remote object by name in the remote host registry */
-        String nameEntry = "RepositoryInterface";
         Registry registry = null;
 
         try{
@@ -45,6 +49,7 @@ public class ServerFactory {
         }
         
         // Get Repository object
+        String nameEntry = "Repository";
         RepositoryInterface repository = null;
         try{
             repository = (RepositoryInterface) registry.lookup(nameEntry);
@@ -59,5 +64,55 @@ public class ServerFactory {
         }
         
         
+        /* instantiate a remote object that runs mobile code and generate a stub for it */
+        int nPrimeMaterialsInFactory = Configurations.getnPrimeMaterialsInFactory();
+        int nTotalPrime = Configurations.gettotalProducts();
+        int nPrimePerProduct = Configurations.getnPrimeMaterialsByProduct();
+        int nPrimeRestock = Configurations.getnMinPrimeMaterialsForRestock();
+        int nProductsCollect = Configurations.getnMaxProductsCollect();
+        Factory factory = new Factory(repository, nPrimeMaterialsInFactory, nTotalPrime, nPrimePerProduct, nPrimeRestock, nProductsCollect);
+        FactoryInterface factoryStub = null;
+        int listeningPort = Configurations.FACTORYPORT;                   /* it should be set accordingly in each case */
+
+        
+        try{
+            factoryStub = (FactoryInterface) UnicastRemoteObject.exportObject(factory, listeningPort);
+        } catch (RemoteException e){
+            System.out.println("Factory stub generation exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        System.out.println("Stub was generated!");
+        
+        
+        /* register it with the general registry service */
+        String nameEntryBase = "RegisterHandler";
+        String nameEntryObject = "Factory";
+        Register reg = null;
+
+        try{
+            reg = (Register) registry.lookup(nameEntryBase);
+        } catch (RemoteException e){
+            System.out.println("RegisterRemoteObject lookup exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        } catch (NotBoundException e){
+            System.out.println("RegisterRemoteObject not bound exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
+        try{
+            reg.bind(nameEntryObject, factoryStub);
+        } catch (RemoteException e){
+            System.out.println("Factory registration exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        } catch (AlreadyBoundException e){
+            System.out.println("Factory already bound exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        System.out.println("Factory object was registered!");
     }
 }

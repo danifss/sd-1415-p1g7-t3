@@ -2,6 +2,7 @@ package CustomerSide;
 
 import Interfaces.RepositoryInterface;
 import Interfaces.ShopInterface;
+import Registry.Configurations;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -21,17 +22,16 @@ public class CustomerMain {
          */
         
         /* get location of the generic registry service */
-        Scanner in = new Scanner(System.in);
-        String rmiRegHostName;
-        int rmiRegPortNumb;
+//        Scanner in = new Scanner(System.in);
+        String rmiRegHostName = Configurations.RMIREGHOSTNAME;
+        int rmiRegPortNumb = Configurations.RMIREGPORTNUMB;
 
-        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
-        rmiRegHostName = in.nextLine();
-        System.out.print("Número do port de escuta do serviço de registo? ");
-        rmiRegPortNumb = in.nextInt();
+//        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
+//        rmiRegHostName = in.nextLine();
+//        System.out.print("Número do port de escuta do serviço de registo? ");
+//        rmiRegPortNumb = in.nextInt();
         
-        System.out.print("Numero de Customers? ");
-        int nCustomers = in.nextInt();
+        int nCustomers = Configurations.getnCustomers();
         
         /* look for the remote object by name in the remote host registry */
         String nameEntry;
@@ -46,7 +46,7 @@ public class CustomerMain {
         }
         
         // Get Repository object
-        nameEntry = "RepositoryInterface";
+        nameEntry = "Repository";
         RepositoryInterface repository = null;
         try{
             repository = (RepositoryInterface) registry.lookup(nameEntry);
@@ -61,7 +61,7 @@ public class CustomerMain {
         }
         
         // Get Shop object
-        nameEntry = "ShopInterface";
+        nameEntry = "Shop";
         ShopInterface shop = null;
         try{
             shop = (ShopInterface) registry.lookup(nameEntry);

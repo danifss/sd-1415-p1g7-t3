@@ -3,6 +3,7 @@ package CraftmanSide;
 import Interfaces.FactoryInterface;
 import Interfaces.RepositoryInterface;
 import Interfaces.ShopInterface;
+import Registry.Configurations;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -25,17 +26,16 @@ public class CraftmanMain {
          */
         
         /* get location of the generic registry service */
-        Scanner in = new Scanner(System.in);
-        String rmiRegHostName;
-        int rmiRegPortNumb;
+//        Scanner in = new Scanner(System.in);
+        String rmiRegHostName = Configurations.RMIREGHOSTNAME;
+        int rmiRegPortNumb = Configurations.RMIREGPORTNUMB;
 
-        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
-        rmiRegHostName = in.nextLine();
-        System.out.print("Número do port de escuta do serviço de registo? ");
-        rmiRegPortNumb = in.nextInt();
+//        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
+//        rmiRegHostName = in.nextLine();
+//        System.out.print("Número do port de escuta do serviço de registo? ");
+//        rmiRegPortNumb = in.nextInt();
         
-        System.out.print("Numero de Craftmans? ");
-        int nCraftmans = in.nextInt();
+        int nCraftmans = Configurations.getnCraftmans();
         
         /* look for the remote object by name in the remote host registry */
         String nameEntry;
@@ -50,7 +50,7 @@ public class CraftmanMain {
         }
         
         // Get Repository object
-        nameEntry = "RepositoryInterface";
+        nameEntry = "Repository";
         RepositoryInterface repository = null;
         try{
             repository = (RepositoryInterface) registry.lookup(nameEntry);
@@ -65,7 +65,7 @@ public class CraftmanMain {
         }
         
         // Get Shop object
-        nameEntry = "ShopInterface";
+        nameEntry = "Shop";
         ShopInterface shop = null;
         try{
             shop = (ShopInterface) registry.lookup(nameEntry);
@@ -80,7 +80,7 @@ public class CraftmanMain {
         }
         
         // Get Factory object
-        nameEntry = "FactoryInterface";
+        nameEntry = "Factory";
         FactoryInterface factory = null;
         try{
             factory = (FactoryInterface) registry.lookup(nameEntry);

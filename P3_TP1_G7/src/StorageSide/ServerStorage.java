@@ -1,8 +1,8 @@
 package StorageSide;
 
 import Interfaces.Register;
-import Interfaces.RepositoryInterface;
 import Interfaces.StorageInterface;
+import Registry.Configurations;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -19,14 +19,14 @@ import java.util.Scanner;
 public class ServerStorage {
     public static void main(String[] args){
         /* get location of the registry service */
-        Scanner in = new Scanner(System.in);
-        String rmiRegHostName;
-        int rmiRegPortNumb;
+//        Scanner in = new Scanner(System.in);
+        String rmiRegHostName = Configurations.RMIREGHOSTNAME;
+        int rmiRegPortNumb = Configurations.RMIREGPORTNUMB;
 
-        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
-        rmiRegHostName = in.nextLine();
-        System.out.print("Número do port de escuta do serviço de registo? ");
-        rmiRegPortNumb = in.nextInt();
+//        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
+//        rmiRegHostName = in.nextLine();
+//        System.out.print("Número do port de escuta do serviço de registo? ");
+//        rmiRegPortNumb = in.nextInt();
         
         
         /* create and install the security manager */
@@ -50,17 +50,17 @@ public class ServerStorage {
         
         
         /* instantiate a remote object that runs mobile code and generate a stub for it */
-        int nInitialPrimeMaterialsInStorage = 0;
-        int nPrimeOwnerCarry = 0;
+        int nInitialPrimeMaterialsInStorage = Configurations.getnInitialPrimeMaterialsInStorage();
+        int nPrimeOwnerCarry = Configurations.getnMaxProductsCollect();
         Storage storage = new Storage(nInitialPrimeMaterialsInStorage, nPrimeOwnerCarry);
         StorageInterface storageStub = null;
-        int listeningPort = 22174;                   /* it should be set accordingly in each case */
+        int listeningPort = Configurations.STORAGEPORT;                   /* it should be set accordingly in each case */
 
         
         try{
             storageStub = (StorageInterface) UnicastRemoteObject.exportObject(storage, listeningPort);
         } catch (RemoteException e){
-            System.out.println("ComputeEngine stub generation exception: " + e.getMessage());
+            System.out.println("Storage stub generation exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -87,14 +87,14 @@ public class ServerStorage {
         try{
             reg.bind(nameEntryObject, storageStub);
         } catch (RemoteException e){
-            System.out.println("ComputeEngine registration exception: " + e.getMessage());
+            System.out.println("Storage registration exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (AlreadyBoundException e){
-            System.out.println("ComputeEngine already bound exception: " + e.getMessage());
+            System.out.println("Storage already bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
-        System.out.println("ComputeEngine object was registered!");
+        System.out.println("Storage object was registered!");
     }
 }

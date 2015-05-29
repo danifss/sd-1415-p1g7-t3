@@ -119,7 +119,7 @@ public class Shop implements ShopInterface {
      * @param sharedInfo General repository
      * @param totalProducts Total number of products that the shop can have in this experience
      */
-    public Shop(int nInitialProductsInShop, int nCustomer, RepositoryInterface sharedInfo, int totalProducts){
+    public Shop(int nInitialProductsInShop, int nCustomer, int totalProducts, RepositoryInterface sharedInfo){
         this.sharedInfo = sharedInfo;
         shopState = CLOSED;
         customerInsideShop = 0;

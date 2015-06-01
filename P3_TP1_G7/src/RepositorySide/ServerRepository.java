@@ -85,7 +85,7 @@ public class ServerRepository {
         }
         
         try{
-            reg.bind(nameEntryObject, repositoryStub);
+            reg.bind(nameEntryObject, repository);
         } catch (RemoteException e){
             System.out.println("Repository registration exception: " + e.getMessage());
             e.printStackTrace();

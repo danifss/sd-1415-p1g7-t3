@@ -3,6 +3,7 @@ package CraftmanSide;
 import Interfaces.RepositoryInterface;
 import Interfaces.ShopInterface;
 import Interfaces.FactoryInterface;
+import java.rmi.RemoteException;
 
 /**
  * This class is responsible to host the Craftman
@@ -105,38 +106,45 @@ public class Craftman extends Thread implements CraftmanInterface {
     @Override
     public void run(){
         System.out.println("Iniciado o Craftman: " + craftmanId);
-        while (!endOper()){
-            switch (stateCraftman){
-                case FETCHING_PRIME_MATERIALS:
-                    if (factory.checkForRestock() && !factory.flagPrimeActivated()){
-                        primeMaterialsNeeded();
-                        System.out.printf("Artesao %d\t- A pedir materia prima.\n", craftmanId);
-                    } else{
-                        if (checkForMaterials()){
-                            collectMaterials();
-                            if (nPrimeMaterials != 0){
-                                prepareToProduce();
-                                System.out.printf("Artesao %d\t- Obteu %d materias primas.\n", craftmanId, nPrimeMaterials);
+        
+        try {
+            while (!endOper()){
+                switch (stateCraftman){
+                    case FETCHING_PRIME_MATERIALS:
+                        if (factory.checkForRestock() && !factory.flagPrimeActivated()){
+                            primeMaterialsNeeded();
+                            System.out.printf("Artesao %d\t- A pedir materia prima.\n", craftmanId);
+                        } else{
+                            if (checkForMaterials()){
+                                collectMaterials();
+                                if (nPrimeMaterials != 0){
+                                    prepareToProduce();
+                                    System.out.printf("Artesao %d\t- Obteu %d materias primas.\n", craftmanId, nPrimeMaterials);
+                                }
                             }
                         }
-                    }
-                    break;
-                case PRODUCING_A_NEW_PIECE:
-                    shapingItUp();
-                    goToStore();
-                    System.out.printf("Artesao %d\t- Produziu um produto.\n", craftmanId);
-                    break;
-                case STORING_IT_FOR_TRANSFER:
-                    if (factory.checkContactProduct()){
-                        batchReadyForTransfer();
-                    } else{
+                        break;
+                    case PRODUCING_A_NEW_PIECE:
+                        shapingItUp();
+                        goToStore();
+                        System.out.printf("Artesao %d\t- Produziu um produto.\n", craftmanId);
+                        break;
+                    case STORING_IT_FOR_TRANSFER:
+                        if (factory.checkContactProduct()){
+                            batchReadyForTransfer();
+                        } else{
+                            backToWork();
+                        }
+                        break;
+                    case CONTACTING_THE_ENTREPRENEUR:
                         backToWork();
-                    }
-                    break;
-                case CONTACTING_THE_ENTREPRENEUR:
-                    backToWork();
-                    break;
+                        break;
+                }
             }
+        } catch(RemoteException e) {
+            System.out.println("Craftman life cycle exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
         }
         System.out.println("Terminado o Craftman: " + craftmanId);
     }
@@ -144,7 +152,7 @@ public class Craftman extends Thread implements CraftmanInterface {
     /**
      * He goes to the factory to see if he can collect prime materials.
      */
-    private boolean checkForMaterials(){
+    private boolean checkForMaterials() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -156,7 +164,7 @@ public class Craftman extends Thread implements CraftmanInterface {
      * He goes to the factory to collect prime materials. He adds to the number of prime materials
      * he has the number of prime materials collected.
      */
-    private void collectMaterials(){
+    private void collectMaterials() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -167,7 +175,7 @@ public class Craftman extends Thread implements CraftmanInterface {
     /**
      * He prepares to produce a new piece.
      */
-    private void prepareToProduce(){
+    private void prepareToProduce() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -181,7 +189,7 @@ public class Craftman extends Thread implements CraftmanInterface {
      * increments the number of products he has at the moments and the total number of products
      * produced.
      */
-    private void shapingItUp(){
+    private void shapingItUp() throws RemoteException{
         try{
             sleep((long) (500 + 100 * Math.random()));
         } catch (InterruptedException e){
@@ -196,7 +204,7 @@ public class Craftman extends Thread implements CraftmanInterface {
      * He stores the product produced, decreasing the number of products he has with him at the
      * moment.
      */
-    private void goToStore(){
+    private void goToStore() throws RemoteException{
         try{
             sleep((long) (200 + 20 * Math.random()));
         } catch (InterruptedException e){
@@ -210,7 +218,7 @@ public class Craftman extends Thread implements CraftmanInterface {
      * factory to activate the flag (to prevent other Craftmans from calling the Owner), and then
      * goes to the shop to contact the Owner.
      */
-    private void batchReadyForTransfer(){
+    private void batchReadyForTransfer() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -223,7 +231,7 @@ public class Craftman extends Thread implements CraftmanInterface {
     /**
      * He goes back to work to produce a new product.
      */
-    private void backToWork(){
+    private void backToWork() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -236,7 +244,7 @@ public class Craftman extends Thread implements CraftmanInterface {
      * the Factory to check if someone already contacted the Owner, if someone already done it, he
      * doesn't do anything, if nobody done it, he goes to the Shop and contacts the Owner.
      */
-    private void primeMaterialsNeeded(){
+    private void primeMaterialsNeeded() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -255,7 +263,7 @@ public class Craftman extends Thread implements CraftmanInterface {
      *
      * @return true if needs to stop
      */
-    private boolean endOper(){
+    private boolean endOper() throws RemoteException{
         // valida se o craftman deve terminar ou nao
         return factory.endOfPrimeMaterials() && !checkForMaterials() && (stateCraftman == FETCHING_PRIME_MATERIALS) && (nPrimeMaterials == 0);
     }
@@ -265,7 +273,7 @@ public class Craftman extends Thread implements CraftmanInterface {
      *
      * @param state State of the Craftman
      */
-    private void setCraftmanState(int state){
+    private void setCraftmanState(int state) throws RemoteException{
         stateCraftman = state;
         info.setCraftmanState(craftmanId, state);
     }

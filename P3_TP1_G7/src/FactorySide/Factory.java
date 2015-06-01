@@ -2,6 +2,7 @@ package FactorySide;
 
 import Interfaces.FactoryInterface;
 import Interfaces.RepositoryInterface;
+import java.rmi.RemoteException;
 
 /**
  * This class is responsible to host the Factory/Workshop
@@ -183,7 +184,7 @@ public class Factory implements FactoryInterface {
      * @return number of collected prime materials
      */
     @Override
-    public synchronized int collectMaterials(){
+    public synchronized int collectMaterials() throws RemoteException{
         // Ensure that there is prime materials to collect
         if (checkForMaterials()){
             nPrimeMaterialsInFactory -= nPrimePerProduct;
@@ -203,7 +204,7 @@ public class Factory implements FactoryInterface {
      * @return number of products the Craftman stored
      */
     @Override
-    public synchronized int goToStore(int nProd){
+    public synchronized int goToStore(int nProd) throws RemoteException{
         nFinishedProductsInFactory += nProd;
         nProductsManufactured += nProd;
 
@@ -282,7 +283,7 @@ public class Factory implements FactoryInterface {
      * @return number of products collected
      */
     @Override
-    public synchronized int goToWorkshop(){
+    public synchronized int goToWorkshop() throws RemoteException{
         int res;
         if (nFinishedProductsInFactory <= nProductsCollect){
             res = nFinishedProductsInFactory;
@@ -304,7 +305,7 @@ public class Factory implements FactoryInterface {
      * @param nPrimeMaterials Amount of prime materials to restock
      */
     @Override
-    public synchronized void replenishStock(int nPrimeMaterials){
+    public synchronized void replenishStock(int nPrimeMaterials) throws RemoteException{
         nPrimeMaterialsInFactory += nPrimeMaterials;
         nPrimeMaterialsSupplied += nPrimeMaterials;
         nSuppliedTimes += 1;

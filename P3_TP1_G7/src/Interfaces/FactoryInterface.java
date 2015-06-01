@@ -1,6 +1,7 @@
 package Interfaces;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  * @author Daniel 51908
@@ -16,7 +17,7 @@ public interface FactoryInterface extends Remote {
      * to collect products.
      *
      */
-    void batchReadyForTransfer();
+    void batchReadyForTransfer() throws RemoteException;
 
     /**
      * The Craftman verifies if he needs to contact the owner to collect products. Checks if the
@@ -26,7 +27,7 @@ public interface FactoryInterface extends Remote {
      *
      * @return true if he needs to contact
      */
-    boolean checkContactProduct();
+    boolean checkContactProduct() throws RemoteException;
 
     /**
      * The Craftman checks if the Factory has prime materials to collect. If the number of prime
@@ -37,7 +38,7 @@ public interface FactoryInterface extends Remote {
      *
      * @return true if has materials
      */
-    boolean checkForMaterials();
+    boolean checkForMaterials() throws RemoteException;
 
     /**
      * Check if the Craftman needs to contact owner to bring prime materials. The Craftman needs to
@@ -48,7 +49,7 @@ public interface FactoryInterface extends Remote {
      *
      * @return true if needs to restock
      */
-    boolean checkForRestock();
+    boolean checkForRestock() throws RemoteException;
 
     /**
      * The Craftman collects prime materials. He checks again if there is prime materials (to avoid
@@ -57,7 +58,7 @@ public interface FactoryInterface extends Remote {
      *
      * @return number of collected prime materials
      */
-    int collectMaterials();
+    int collectMaterials() throws RemoteException;
 
     /**
      * Checks if the all the prime materials from the storage were supplied. This function helps the
@@ -65,21 +66,21 @@ public interface FactoryInterface extends Remote {
      *
      * @return true if there is no more prime materials in the storage
      */
-    boolean endOfPrimeMaterials();
+    boolean endOfPrimeMaterials() throws RemoteException;
 
     /**
      * The Craftman sees if someone already contacted the owner to restock prime materials.
      *
      * @return true if someone already contacted the owner
      */
-    boolean flagPrimeActivated();
+    boolean flagPrimeActivated() throws RemoteException;
 
     /**
      * Craftman sees how many prime materials needs to produce a new product
      *
      * @return number of prime materials needed per products
      */
-    int getnPrimePerProduct();
+    int getnPrimePerProduct() throws RemoteException;
 
     /**
      * The Craftman stores the products produced. The Craftman adds the number of products produced
@@ -89,7 +90,7 @@ public interface FactoryInterface extends Remote {
      * @param nProd Number of products that the Craftman has
      * @return number of products the Craftman stored
      */
-    int goToStore(int nProd);
+    int goToStore(int nProd) throws RemoteException;
 
     /**
      * The Craftman turns true the flag that indicates that prime materials are needed. He also
@@ -97,7 +98,7 @@ public interface FactoryInterface extends Remote {
      *
      * @return true if he contacted the owner
      */
-    boolean primeMaterialsNeeded();
+    boolean primeMaterialsNeeded() throws RemoteException;
 
     // OWNER
     /**
@@ -106,7 +107,7 @@ public interface FactoryInterface extends Remote {
      *
      * @param nPrimeMaterials Amount of prime materials to restock
      */
-    void replenishStock(int nPrimeMaterials);
+    void replenishStock(int nPrimeMaterials) throws RemoteException;
 
     /**
      * Owner goes to factory to collect finished products. If he can collect all the products
@@ -117,5 +118,5 @@ public interface FactoryInterface extends Remote {
      *
      * @return number of products collected
      */
-    int goToWorkshop();
+    int goToWorkshop() throws RemoteException;
 }

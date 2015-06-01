@@ -2,6 +2,7 @@ package ShopSide;
 
 import Interfaces.RepositoryInterface;
 import Interfaces.ShopInterface;
+import java.rmi.RemoteException;
 
 /**
  * This class is responsible to host the Shop
@@ -198,7 +199,7 @@ public class Shop implements ShopInterface {
      * STILL_OPEN, if the shop doesn't have Customers, the shop change his state to CLOSED.
      */
     @Override
-    public synchronized void closeTheDoor(){
+    public synchronized void closeTheDoor() throws RemoteException{
         if (customersInTheShop()){
             setShopState(STILL_OPEN);
             System.out.println("Shop\t\t- Vai Fechar.");
@@ -212,7 +213,7 @@ public class Shop implements ShopInterface {
      * Owner opens the door. The state of the Shop is changed to OPEN.
      */
     @Override
-    public synchronized void openTheDoor(){
+    public synchronized void openTheDoor() throws RemoteException{
         setShopState(OPEN);
         System.out.println("Shop\t\t- Porta Aberta.");
     }
@@ -231,7 +232,7 @@ public class Shop implements ShopInterface {
      * The owner goes to the Factory to collect products.
      */
     @Override
-    public synchronized void goToWorkshop(){
+    public synchronized void goToWorkshop() throws RemoteException{
         flagBringProductsFromFactory -= 1;
         if (flagBringProductsFromFactory > 0){
             sharedInfo.setTranfsProductsToShop(true);
@@ -246,7 +247,7 @@ public class Shop implements ShopInterface {
      * @param goods Number of products to add to the number of products in display
      */
     @Override
-    public synchronized void addnGoodsInDisplay(int goods){
+    public synchronized void addnGoodsInDisplay(int goods) throws RemoteException{
         nGoodsInDisplay += goods;
         nProductsDelivered += goods;
         sharedInfo.setnGoodsInDisplay(nGoodsInDisplay);
@@ -256,7 +257,7 @@ public class Shop implements ShopInterface {
      * Owner goes to Factory to restock prime materials.
      */
     @Override
-    public synchronized void replenishStock(){
+    public synchronized void replenishStock() throws RemoteException{
         flagPrimeMaterialsNeeded = false;
         sharedInfo.setSupplyMaterialsToFactory(flagPrimeMaterialsNeeded);
     }
@@ -266,7 +267,7 @@ public class Shop implements ShopInterface {
      * wakes up the Owner.
      */
     @Override
-    public synchronized void primeMaterialsNeeded(){
+    public synchronized void primeMaterialsNeeded() throws RemoteException{
         flagPrimeMaterialsNeeded = true;
         sharedInfo.setSupplyMaterialsToFactory(flagPrimeMaterialsNeeded);
         notifyAll();
@@ -277,7 +278,7 @@ public class Shop implements ShopInterface {
      * flag and wakes up the Owner.
      */
     @Override
-    public synchronized void batchReadyForTransfer(){
+    public synchronized void batchReadyForTransfer() throws RemoteException{
         flagBringProductsFromFactory += 1;
         sharedInfo.setTranfsProductsToShop(true);
         notifyAll();
@@ -341,7 +342,7 @@ public class Shop implements ShopInterface {
      * The customer enters the shop.
      */
     @Override
-    public synchronized void enterShop(){
+    public synchronized void enterShop() throws RemoteException{
         this.customerInsideShop++;
         sharedInfo.setnCustomersInsideShop(customerInsideShop);
     }
@@ -354,7 +355,7 @@ public class Shop implements ShopInterface {
      * @return number of goods to buy
      */
     @Override
-    public synchronized int perusingAround(){
+    public synchronized int perusingAround() throws RemoteException{
         // choose what to buy
         double r = Math.random();
         if ((r < 0.5) && (nGoodsInDisplay > 0)){ // 50% probability to buy
@@ -424,7 +425,7 @@ public class Shop implements ShopInterface {
      * but the last one don't buy anything).
      */
     @Override
-    public synchronized void exitShop(){
+    public synchronized void exitShop() throws RemoteException{
         customerInsideShop--;
         sharedInfo.setnCustomersInsideShop(customerInsideShop);
         if (!customersInTheShop()){
@@ -438,7 +439,7 @@ public class Shop implements ShopInterface {
      * @param state State of the Shop
      */
     @Override
-    public synchronized void setShopState(int state){
+    public synchronized void setShopState(int state) throws RemoteException{
         shopState = state;
         sharedInfo.setShopState(state);
     }

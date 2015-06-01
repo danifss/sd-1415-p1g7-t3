@@ -107,57 +107,63 @@ public class Owner extends Thread implements OwnerInterface {
     public void run() {
         System.out.println("Iniciado o Owner.");
 
-        shop.openTheDoor(); // Owner needs to open the shop before he starts working
+        try {
+            shop.openTheDoor(); // Owner needs to open the shop before he starts working
 
-        while (!endOper()){
-            switch (ownerState){
-                case OPENING_THE_SHOP:
-                    prepareToWork();
-                    break;
-                case WAITING_FOR_NEXT_TASK:
-                    int decision = appraiseSit();
-                    if (decision == NEED_TO_CLOSE_SHOP){
-                        closeTheDoor();
-                        if (customersInTheShop()){
-                            break;
+            while (!endOper()){
+                switch (ownerState){
+                    case OPENING_THE_SHOP:
+                        prepareToWork();
+                        break;
+                    case WAITING_FOR_NEXT_TASK:
+                        int decision = appraiseSit();
+                        if (decision == NEED_TO_CLOSE_SHOP){
+                            closeTheDoor();
+                            if (customersInTheShop()){
+                                break;
+                            }
+                            prepareToLeave();
+                        } else if (decision == ADDRESS_CUSTOMER){
+                            addressACustomer();
                         }
-                        prepareToLeave();
-                    } else if (decision == ADDRESS_CUSTOMER){
-                        addressACustomer();
-                    }
-                    break;
-                case ATTENDING_A_CUSTOMER:
-                    System.out.printf("Owner\t\t- Atender o cliente %d.\n", attendingCustomerId);
-                    serviceCustomer();
-                    sayGoodByeToCustomer();
-                    break;
-                case CLOSING_THE_SHOP:
-                    if (shop.isSupplyMaterialsToFactory()){
-                        visitSuppliers();
-                        System.out.printf("Owner\t\t- Vou ao armazem comprar materia prima.\n");
-                    } else if (shop.isTranfsProductsToShop()){
-                        goToWorkShop();
-                        System.out.printf("Owner\t\t- Vou a oficina.\n");
-                    } else{
-                        System.out.printf("Owner\t\t- Fim.\n");
+                        break;
+                    case ATTENDING_A_CUSTOMER:
+                        System.out.printf("Owner\t\t- Atender o cliente %d.\n", attendingCustomerId);
+                        serviceCustomer();
+                        sayGoodByeToCustomer();
+                        break;
+                    case CLOSING_THE_SHOP:
+                        if (shop.isSupplyMaterialsToFactory()){
+                            visitSuppliers();
+                            System.out.printf("Owner\t\t- Vou ao armazem comprar materia prima.\n");
+                        } else if (shop.isTranfsProductsToShop()){
+                            goToWorkShop();
+                            System.out.printf("Owner\t\t- Vou a oficina.\n");
+                        } else{
+                            System.out.printf("Owner\t\t- Fim.\n");
+                            returnToShop();
+                        }
+                        break;
+                    case COLLECTING_A_BATCH_OF_PRODUCTS:
                         returnToShop();
-                    }
-                    break;
-                case COLLECTING_A_BATCH_OF_PRODUCTS:
-                    returnToShop();
-                    break;
-                case BUYING_PRIME_MATERIALS:
-                    if (nPrimeMaterials > 0){
-                        replenishStock();
-                        System.out.printf("Owner\t\t- Repor stock da oficina.\n");
-                    } else{
-                        setOwnerState(DELIVERING_PRIME_MATERIALS);
-                    }
-                    break;
-                case DELIVERING_PRIME_MATERIALS:
-                    returnToShop();
-                    break;
+                        break;
+                    case BUYING_PRIME_MATERIALS:
+                        if (nPrimeMaterials > 0){
+                            replenishStock();
+                            System.out.printf("Owner\t\t- Repor stock da oficina.\n");
+                        } else{
+                            setOwnerState(DELIVERING_PRIME_MATERIALS);
+                        }
+                        break;
+                    case DELIVERING_PRIME_MATERIALS:
+                        returnToShop();
+                        break;
+                }
             }
+        } catch(RemoteException e){
+            System.out.println("Owner life cycle exception" + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
         }
         System.out.println("Terminado o Owner.");
     }
@@ -165,7 +171,7 @@ public class Owner extends Thread implements OwnerInterface {
     /**
      * Owner prepares to work, changing his state to waiting for the next task.
      */
-    private void prepareToWork(){
+    private void prepareToWork() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -178,7 +184,7 @@ public class Owner extends Thread implements OwnerInterface {
      *
      * @return action he will do
      */
-    private int appraiseSit(){
+    private int appraiseSit() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -189,7 +195,7 @@ public class Owner extends Thread implements OwnerInterface {
     /**
      * Owner closes the door of the Shop.
      */
-    private void closeTheDoor(){
+    private void closeTheDoor() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -200,7 +206,7 @@ public class Owner extends Thread implements OwnerInterface {
     /**
      * Owner sees if there is customers in the shop.
      */
-    private boolean customersInTheShop(){
+    private boolean customersInTheShop() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -211,7 +217,7 @@ public class Owner extends Thread implements OwnerInterface {
     /**
      * Owner prepares to go to the Factory.
      */
-    private void prepareToLeave(){
+    private void prepareToLeave() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -222,7 +228,7 @@ public class Owner extends Thread implements OwnerInterface {
     /**
      * Owner prepares to address a customer.
      */
-    private void addressACustomer(){
+    private void addressACustomer() throws RemoteException{
         try{
             sleep((long) (100));
         } catch (InterruptedException e){
@@ -234,7 +240,7 @@ public class Owner extends Thread implements OwnerInterface {
     /**
      * Owner services a Customer. He will take more time if the Customer is buying more products.
      */
-    private void serviceCustomer(){
+    private void serviceCustomer() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -255,7 +261,7 @@ public class Owner extends Thread implements OwnerInterface {
     /**
      * Owner finish the purchase and say goodbye to the Customer. Then he wait for the next task.
      */
-    private void sayGoodByeToCustomer(){
+    private void sayGoodByeToCustomer() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -271,7 +277,7 @@ public class Owner extends Thread implements OwnerInterface {
      * Owner goes to Factory to collect products. Then he adds the products collected to the
      * display.
      */
-    private void goToWorkShop(){
+    private void goToWorkShop() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -287,7 +293,7 @@ public class Owner extends Thread implements OwnerInterface {
     /**
      * Owner goes to the storage to collect some prime materials.
      */
-    private void visitSuppliers() {
+    private void visitSuppliers() throws RemoteException {
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -310,7 +316,7 @@ public class Owner extends Thread implements OwnerInterface {
     /**
      * Owner returns to the shop and opens the door.
      */
-    private void returnToShop(){
+    private void returnToShop() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -323,7 +329,7 @@ public class Owner extends Thread implements OwnerInterface {
     /**
      * Owner delivers prime materials to the Factory.
      */
-    private void replenishStock(){
+    private void replenishStock() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -341,7 +347,7 @@ public class Owner extends Thread implements OwnerInterface {
      *
      * @return true if needs to stop
      */
-    private boolean endOper(){
+    private boolean endOper() throws RemoteException{
         return shop.endOper() && (ownerState == CLOSING_THE_SHOP) && !shop.customersInTheShop();
     }
 
@@ -350,7 +356,7 @@ public class Owner extends Thread implements OwnerInterface {
      *
      * @param ownerState state of the owner
      */
-    private void setOwnerState(int ownerState){
+    private void setOwnerState(int ownerState) throws RemoteException{
         this.ownerState = ownerState;
         sharedInfo.setOwnerState(ownerState);
     }

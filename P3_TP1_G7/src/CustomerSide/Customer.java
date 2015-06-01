@@ -2,6 +2,7 @@ package CustomerSide;
 
 import Interfaces.RepositoryInterface;
 import Interfaces.ShopInterface;
+import java.rmi.RemoteException;
 
 /**
  * This class is responsible to host the Customers
@@ -84,36 +85,43 @@ public class Customer extends Thread implements CustomerInterface {
     @Override
     public void run(){
         System.out.println("Iniciado o Customer: " + customerId);
-        while (!endOper()){
-            switch (customerState){
-                case CARRYING_OUT_DAILY_CHORES:
-                    livingNormalLife();
-                    goShopping();
-                    break;
-                case CHECKING_DOOR_OPEN:
-                    if (isDoorOpen()){
-                        enterShop();
-                        System.out.printf("Cliente %d\t- Entrou na loja.\n", customerId);
-                    } else{
-                        tryAgainLater();
-                    }
-                    break;
-                case APPRAISING_OFFER_IN_DISPLAY:
-                    perusingAround();
-                    System.out.printf("Cliente %d\t- A escolher produtos.\n", customerId);
-                    if (nProductsCustomer > 0){
-                        iWantThis();
-                        System.out.printf("Cliente %d\t- Comprou %d produtos.\n", customerId, nProductsCustomer);
-                    } else{
+        
+        try {
+            while (!endOper()){
+                switch (customerState){
+                    case CARRYING_OUT_DAILY_CHORES:
+                        livingNormalLife();
+                        goShopping();
+                        break;
+                    case CHECKING_DOOR_OPEN:
+                        if (isDoorOpen()){
+                            enterShop();
+                            System.out.printf("Cliente %d\t- Entrou na loja.\n", customerId);
+                        } else{
+                            tryAgainLater();
+                        }
+                        break;
+                    case APPRAISING_OFFER_IN_DISPLAY:
+                        perusingAround();
+                        System.out.printf("Cliente %d\t- A escolher produtos.\n", customerId);
+                        if (nProductsCustomer > 0){
+                            iWantThis();
+                            System.out.printf("Cliente %d\t- Comprou %d produtos.\n", customerId, nProductsCustomer);
+                        } else{
+                            exitShop();
+                            System.out.printf("Cliente %d\t- Saiu sem comprar produtos.\n", customerId);
+                        }
+                        break;
+                    case BUYING_SOME_GOODS:
                         exitShop();
-                        System.out.printf("Cliente %d\t- Saiu sem comprar produtos.\n", customerId);
-                    }
-                    break;
-                case BUYING_SOME_GOODS:
-                    exitShop();
-                    System.out.printf("Cliente %d\t- Saiu da loja.\n", customerId);
-                    break;
+                        System.out.printf("Cliente %d\t- Saiu da loja.\n", customerId);
+                        break;
+                }
             }
+        } catch(RemoteException e) {
+            System.out.println("Customer life cycle exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
         }
         System.out.println("Terminado o Customer: " + customerId);
     }
@@ -131,7 +139,7 @@ public class Customer extends Thread implements CustomerInterface {
     /**
      * Customer goes shopping. First, he will need to check if the door is open.
      */
-    private void goShopping(){
+    private void goShopping() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -142,7 +150,7 @@ public class Customer extends Thread implements CustomerInterface {
     /**
      * Customer checks if the shop is open.
      */
-    private boolean isDoorOpen(){
+    private boolean isDoorOpen() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -153,7 +161,7 @@ public class Customer extends Thread implements CustomerInterface {
     /**
      * If the shop is not open, he will try again later.
      */
-    private void tryAgainLater(){
+    private void tryAgainLater() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -169,7 +177,7 @@ public class Customer extends Thread implements CustomerInterface {
     /**
      * Customer enters the shop.
      */
-    private void enterShop(){
+    private void enterShop() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -183,7 +191,7 @@ public class Customer extends Thread implements CustomerInterface {
      *
      * @return Number of goods to buy
      */
-    private void perusingAround(){
+    private void perusingAround() throws RemoteException{
         try{
             sleep((long) (100 + 20 * Math.random()));
         } catch (InterruptedException e){
@@ -197,7 +205,7 @@ public class Customer extends Thread implements CustomerInterface {
      *
      * @param goods
      */
-    private void iWantThis(){
+    private void iWantThis() throws RemoteException{
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -212,7 +220,7 @@ public class Customer extends Thread implements CustomerInterface {
     /**
      * Customer leaves the Shop.
      */
-    private void exitShop(){
+    private void exitShop() throws RemoteException{
         try{
             sleep((long) (100 + 25 * Math.random()));
         } catch (InterruptedException e){
@@ -228,7 +236,7 @@ public class Customer extends Thread implements CustomerInterface {
      *
      * @return true if needs to stop
      */
-    private boolean endOper(){
+    private boolean endOper() throws RemoteException{
         return shop.endOper() && customerState == CARRYING_OUT_DAILY_CHORES;
     }
 
@@ -237,7 +245,7 @@ public class Customer extends Thread implements CustomerInterface {
      *
      * @param customerState
      */
-    private void setCustomerState(int customerState){
+    private void setCustomerState(int customerState) throws RemoteException{
         this.customerState = customerState;
         sharedInfo.setCustomerState(customerId, customerState);
     }

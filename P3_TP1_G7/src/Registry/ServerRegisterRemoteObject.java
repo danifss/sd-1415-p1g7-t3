@@ -31,10 +31,10 @@ public class ServerRegisterRemoteObject {
         rmiRegPortNumb = 22170; //in.nextInt();
         
         
-        Configurations data;
+        //Configurations data;
         
         // Option to select values when the program starts.
-        System.out.println("Use default values?(y/n) ");
+        System.out.print("Use default values?(y/n) ");
         if(in.nextLine().equalsIgnoreCase("n")){
             // Logging file name
             System.out.println ("Name of logging file? ");
@@ -72,11 +72,11 @@ public class ServerRegisterRemoteObject {
             System.out.println("Number of minimum prime materials for restock: ");
             int nMinPrimeMaterialsForRestock = in.nextInt();
             
-            data = new Configurations(rmiRegHostName, rmiRegPortNumb, fName,nCraftmans, nCustomers, nPrimeMaterialsInFactory, nInitialProductsInShop, nInitialPrimeMaterialsInStorage, nPrimeMaterialsByProduct, nMinPrimeMaterialsForRestock, nMaxProductsCollect);
+            Configurations.setConfigurations(rmiRegHostName, rmiRegPortNumb, fName,nCraftmans, nCustomers, nPrimeMaterialsInFactory, nInitialProductsInShop, nInitialPrimeMaterialsInStorage, nPrimeMaterialsByProduct, nMinPrimeMaterialsForRestock, nMaxProductsCollect);
             
         } else {
             // default values
-            data = new Configurations(rmiRegHostName, rmiRegPortNumb);
+            Configurations.setConfigurations(rmiRegHostName, rmiRegPortNumb);
         }
         
 

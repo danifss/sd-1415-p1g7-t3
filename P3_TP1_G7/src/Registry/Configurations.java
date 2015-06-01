@@ -8,7 +8,7 @@ package Registry;
  * @version 3.0
  */
 
-public class Configurations { //implements ConfigDataInterface {
+public final class Configurations { //implements ConfigDataInterface {
 
     /**
      * Logging file name
@@ -121,28 +121,79 @@ public class Configurations { //implements ConfigDataInterface {
     public static final int STORAGEPORT = 22175;    
     
 
+//    /**
+//     * Configurations Server Constructor with default values
+//     * @param rmiRegHostName
+//     * @param rmiRegPortNumb
+//     */
+//	public Configurations(String rmiRegHostName, int rmiRegPortNumb){
+//        Configurations.RMIREGHOSTNAME = rmiRegHostName;
+//        Configurations.RMIREGPORTNUMB = rmiRegPortNumb;
+//        Configurations.fName = "log.txt";
+//        Configurations.nCraftmans = 3;
+//        Configurations.nCustomers = 3;
+//        Configurations.nPrimeMaterialsInFactory = 10;
+//        Configurations.nInitialProductsInShop = 10;
+//        Configurations.nInitialPrimeMaterialsInStorage = 20;
+//        Configurations.nPrimeMaterialsByProduct = 2;
+//        Configurations.nMinPrimeMaterialsForRestock = 10;
+//        Configurations.nMaxProductsCollect = 5;
+//        Configurations.totalProducts = ((nPrimeMaterialsInFactory + nInitialPrimeMaterialsInStorage / nPrimeMaterialsByProduct) + nInitialProductsInShop);
+//	}
+//    
+//    /**
+//     * Configurations Server Constructor with parameters
+//     * 
+//     * @param rmiRegHostName
+//     * @param rmiRegPortNumb
+//     * @param fName
+//     * @param nCraftmans
+//     * @param nCustomers
+//     * @param nPrimeMaterialsInFactory
+//     * @param nInitialProductsInShop
+//     * @param nInitialPrimeMaterialsInStorage
+//     * @param nPrimeMaterialsByProduct
+//     * @param nMinPrimeMaterialsForRestock
+//     * @param nMaxProductsCollect
+//     */
+//	public Configurations(String rmiRegHostName, int rmiRegPortNumb, String fName, int nCraftmans, int nCustomers, int nPrimeMaterialsInFactory, int nInitialProductsInShop, int nInitialPrimeMaterialsInStorage, int nPrimeMaterialsByProduct, int nMinPrimeMaterialsForRestock, int nMaxProductsCollect){
+//        Configurations.RMIREGHOSTNAME = rmiRegHostName;
+//        Configurations.RMIREGPORTNUMB = rmiRegPortNumb;
+//        Configurations.fName = fName;
+//        Configurations.nCraftmans = nCraftmans;
+//        Configurations.nCustomers = nCustomers;
+//        Configurations.nPrimeMaterialsInFactory = nPrimeMaterialsInFactory;
+//        Configurations.nInitialProductsInShop = nInitialProductsInShop;
+//        Configurations.nInitialPrimeMaterialsInStorage = nInitialPrimeMaterialsInStorage;
+//        Configurations.nPrimeMaterialsByProduct = nPrimeMaterialsByProduct;
+//        Configurations.nMinPrimeMaterialsForRestock = nMinPrimeMaterialsForRestock;
+//        Configurations.nMaxProductsCollect = nMaxProductsCollect;
+//        Configurations.totalProducts = ((nPrimeMaterialsInFactory + nInitialPrimeMaterialsInStorage / nPrimeMaterialsByProduct) + nInitialProductsInShop);
+//    }
+
+    
     /**
-     * Configurations Server Constructor with default values
+     * Configurations Server with default values
      * @param rmiRegHostName
      * @param rmiRegPortNumb
      */
-	public Configurations(String rmiRegHostName, int rmiRegPortNumb){
-        Configurations.RMIREGHOSTNAME = rmiRegHostName;
-        Configurations.RMIREGPORTNUMB = rmiRegPortNumb;
-        Configurations.fName = "log.txt";
-        Configurations.nCraftmans = 3;
-        Configurations.nCustomers = 3;
-        Configurations.nPrimeMaterialsInFactory = 10;
-        Configurations.nInitialProductsInShop = 10;
-        Configurations.nInitialPrimeMaterialsInStorage = 20;
-        Configurations.nPrimeMaterialsByProduct = 2;
-        Configurations.nMinPrimeMaterialsForRestock = 10;
-        Configurations.nMaxProductsCollect = 5;
-        Configurations.totalProducts = ((nPrimeMaterialsInFactory + nInitialPrimeMaterialsInStorage / nPrimeMaterialsByProduct) + nInitialProductsInShop);
+	public static void setConfigurations(String rmiRegHostName, int rmiRegPortNumb){
+        RMIREGHOSTNAME = rmiRegHostName;
+        RMIREGPORTNUMB = rmiRegPortNumb;
+        fName = "log.txt";
+        nCraftmans = 3;
+        nCustomers = 3;
+        nPrimeMaterialsInFactory = 10;
+        nInitialProductsInShop = 10;
+        nInitialPrimeMaterialsInStorage = 20;
+        nPrimeMaterialsByProduct = 2;
+        nMinPrimeMaterialsForRestock = 10;
+        nMaxProductsCollect = 5;
+        totalProducts = ((nPrimeMaterialsInFactory + nInitialPrimeMaterialsInStorage / nPrimeMaterialsByProduct) + nInitialProductsInShop);
 	}
     
     /**
-     * Configurations Server Constructor with parameters
+     * Configurations Server with parameters
      * 
      * @param rmiRegHostName
      * @param rmiRegPortNumb
@@ -156,7 +207,7 @@ public class Configurations { //implements ConfigDataInterface {
      * @param nMinPrimeMaterialsForRestock
      * @param nMaxProductsCollect
      */
-	public Configurations(String rmiRegHostName, int rmiRegPortNumb, String fName, int nCraftmans, int nCustomers, int nPrimeMaterialsInFactory, int nInitialProductsInShop, int nInitialPrimeMaterialsInStorage, int nPrimeMaterialsByProduct, int nMinPrimeMaterialsForRestock, int nMaxProductsCollect){
+	public static void setConfigurations(String rmiRegHostName, int rmiRegPortNumb, String fName, int nCraftmans, int nCustomers, int nPrimeMaterialsInFactory, int nInitialProductsInShop, int nInitialPrimeMaterialsInStorage, int nPrimeMaterialsByProduct, int nMinPrimeMaterialsForRestock, int nMaxProductsCollect){
         Configurations.RMIREGHOSTNAME = rmiRegHostName;
         Configurations.RMIREGPORTNUMB = rmiRegPortNumb;
         Configurations.fName = fName;
@@ -170,7 +221,6 @@ public class Configurations { //implements ConfigDataInterface {
         Configurations.nMaxProductsCollect = nMaxProductsCollect;
         Configurations.totalProducts = ((nPrimeMaterialsInFactory + nInitialPrimeMaterialsInStorage / nPrimeMaterialsByProduct) + nInitialProductsInShop);
     }
-
     
     /**
      * Get logging file name.

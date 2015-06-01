@@ -47,6 +47,7 @@ public class ServerFactory {
             e.printStackTrace();
             System.exit(1);
         }
+        System.out.println("RMI registry was created!");
         
         // Get Repository object
         String nameEntry = "Repository";

@@ -51,7 +51,7 @@ public class ServerStorage {
         
         /* instantiate a remote object that runs mobile code and generate a stub for it */
         int nInitialPrimeMaterialsInStorage = Configurations.getnInitialPrimeMaterialsInStorage();
-        int nPrimeOwnerCarry = Configurations.getnMaxProductsCollect();
+        int nPrimeOwnerCarry = Configurations.getnMinPrimeMaterialsForRestock();
         Storage storage = new Storage(nInitialPrimeMaterialsInStorage, nPrimeOwnerCarry);
         StorageInterface storageStub = null;
         int listeningPort = Configurations.STORAGEPORT;                   /* it should be set accordingly in each case */

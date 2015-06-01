@@ -66,7 +66,7 @@ public class ServerFactory {
         
         /* instantiate a remote object that runs mobile code and generate a stub for it */
         int nPrimeMaterialsInFactory = Configurations.getnPrimeMaterialsInFactory();
-        int nTotalPrime = Configurations.gettotalProducts();
+        int nTotalPrime = Configurations.getnInitialPrimeMaterialsInStorage();
         int nPrimePerProduct = Configurations.getnPrimeMaterialsByProduct();
         int nPrimeRestock = Configurations.getnMinPrimeMaterialsForRestock();
         int nProductsCollect = Configurations.getnMaxProductsCollect();

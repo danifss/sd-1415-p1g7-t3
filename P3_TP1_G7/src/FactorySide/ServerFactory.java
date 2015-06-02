@@ -1,16 +1,15 @@
 package FactorySide;
 
+import Interfaces.ConfigurationsInterface;
 import Interfaces.FactoryInterface;
 import Interfaces.RegisterInterface;
 import Interfaces.RepositoryInterface;
-import Registry.Configurations;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Scanner;
 
 /**
  * @author Daniel 51908
@@ -21,8 +20,8 @@ public class ServerFactory {
     public static void main(String[] args){
         /* get location of the registry service */
 //        Scanner in = new Scanner(System.in);
-        String rmiRegHostName = Configurations.RMIREGHOSTNAME;
-        int rmiRegPortNumb = Configurations.RMIREGPORTNUMB;
+        String rmiRegHostName = "localhost"; //Configurations.getRMIREGHOSTNAME();
+        int rmiRegPortNumb = 22170; //Configurations.getRMIREGPORTNUMB();
 
 //        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
 //        rmiRegHostName = in.nextLine();
@@ -49,8 +48,24 @@ public class ServerFactory {
         }
         System.out.println("RMI registry was created!");
         
+        
+        // Get Configuration Object
+        String nameEntry = "Configuration";
+        ConfigurationsInterface config = null;
+        try{
+            config = (ConfigurationsInterface) registry.lookup(nameEntry);
+        } catch (RemoteException e){
+            System.out.println("Configuration look up exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        } catch (NotBoundException e){
+            System.out.println("Configuration not bound exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
         // Get Repository object
-        String nameEntry = "Repository";
+        nameEntry = "Repository";
         RepositoryInterface repository = null;
         try{
             repository = (RepositoryInterface) registry.lookup(nameEntry);
@@ -66,15 +81,27 @@ public class ServerFactory {
         
         
         /* instantiate a remote object that runs mobile code and generate a stub for it */
-        int nPrimeMaterialsInFactory = Configurations.getnPrimeMaterialsInFactory();
-        int nTotalPrime = Configurations.getnInitialPrimeMaterialsInStorage();
-        int nPrimePerProduct = Configurations.getnPrimeMaterialsByProduct();
-        int nPrimeRestock = Configurations.getnMinPrimeMaterialsForRestock();
-        int nProductsCollect = Configurations.getnMaxProductsCollect();
+        int nPrimeMaterialsInFactory = 0;
+        int nTotalPrime = 0;
+        int nPrimePerProduct = 0;
+        int nPrimeRestock = 0;
+        int nProductsCollect = 0;
+        int listeningPort = 0;
+        
+        try{
+            nPrimeMaterialsInFactory = config.getnPrimeMaterialsInFactory();
+            nTotalPrime = config.getnInitialPrimeMaterialsInStorage();
+            nPrimePerProduct = config.getnPrimeMaterialsByProduct();
+            nPrimeRestock = config.getnMinPrimeMaterialsForRestock();
+            nProductsCollect = config.getnMaxProductsCollect();
+            listeningPort = config.getFACTORYPORT();
+        } catch(RemoteException e) {
+            System.out.println("Configurations factory getters exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
         Factory factory = new Factory(repository, nPrimeMaterialsInFactory, nTotalPrime, nPrimePerProduct, nPrimeRestock, nProductsCollect);
         FactoryInterface factoryStub = null;
-        int listeningPort = Configurations.FACTORYPORT;                   /* it should be set accordingly in each case */
-
         
         try{
             factoryStub = (FactoryInterface) UnicastRemoteObject.exportObject(factory, listeningPort);

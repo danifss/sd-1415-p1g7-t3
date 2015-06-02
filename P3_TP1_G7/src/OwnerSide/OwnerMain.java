@@ -4,12 +4,10 @@ import Interfaces.FactoryInterface;
 import Interfaces.RepositoryInterface;
 import Interfaces.ShopInterface;
 import Interfaces.StorageInterface;
-import Registry.Configurations;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Scanner;
 
 /**
  * @author Daniel 51908
@@ -27,8 +25,8 @@ public class OwnerMain {
         
         /* get location of the generic registry service */
 //        Scanner in = new Scanner(System.in);
-        String rmiRegHostName = Configurations.RMIREGHOSTNAME;
-        int rmiRegPortNumb = Configurations.RMIREGPORTNUMB;
+        String rmiRegHostName = "localhost"; //Configurations.getRMIREGHOSTNAME();
+        int rmiRegPortNumb = 22170; //Configurations.getRMIREGPORTNUMB();
 
 //        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
 //        rmiRegHostName = in.nextLine();

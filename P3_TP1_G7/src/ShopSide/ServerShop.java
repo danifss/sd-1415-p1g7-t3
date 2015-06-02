@@ -1,9 +1,9 @@
 package ShopSide;
 
+import Interfaces.ConfigurationsInterface;
 import Interfaces.RegisterInterface;
 import Interfaces.RepositoryInterface;
 import Interfaces.ShopInterface;
-import Registry.Configurations;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -21,8 +21,8 @@ public class ServerShop {
     public static void main(String[] args){
         /* get location of the registry service */
 //        Scanner in = new Scanner(System.in);
-        String rmiRegHostName = Configurations.RMIREGHOSTNAME;
-        int rmiRegPortNumb = Configurations.RMIREGPORTNUMB;
+        String rmiRegHostName = "localhost"; //Configurations.getRMIREGHOSTNAME();
+        int rmiRegPortNumb = 22170; //Configurations.getRMIREGPORTNUMB();
 
 //        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
 //        rmiRegHostName = in.nextLine();
@@ -49,8 +49,24 @@ public class ServerShop {
         }
         System.out.println("RMI registry was created!");
         
+        
+        // Get Configuration Object
+        String nameEntry = "Configuration";
+        ConfigurationsInterface config = null;
+        try{
+            config = (ConfigurationsInterface) registry.lookup(nameEntry);
+        } catch (RemoteException e){
+            System.out.println("Configuration look up exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        } catch (NotBoundException e){
+            System.out.println("Configuration not bound exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
         // Get Repository object
-        String nameEntry = "Repository";
+        nameEntry = "Repository";
         RepositoryInterface repository = null;
         try{
             repository = (RepositoryInterface) registry.lookup(nameEntry);
@@ -66,12 +82,24 @@ public class ServerShop {
         
         
         /* instantiate a remote object that runs mobile code and generate a stub for it */
-        int nInitialProductsInShop = Configurations.getnInitialProductsInShop();
-        int nCustomer = Configurations.getnCustomers();
-        int totalProducts = Configurations.gettotalProducts();
+        int nInitialProductsInShop = 0;
+        int nCustomer = 0;
+        int totalProducts = 0;
+        int listeningPort = 0;
+        
+        try{
+            nInitialProductsInShop = config.getnInitialProductsInShop();
+            nCustomer = config.getnCustomers();
+            totalProducts = config.getTotalProducts();
+            listeningPort = config.getSHOPPORT();
+        } catch(RemoteException e) {
+            System.out.println("Configurations shop getters exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        System.out.println("Total products: "+totalProducts);
         Shop shop = new Shop(nInitialProductsInShop, nCustomer, totalProducts, repository);
         ShopInterface shopStub = null;
-        int listeningPort = Configurations.SHOPPORT;                   /* it should be set accordingly in each case */
 
         
         try{

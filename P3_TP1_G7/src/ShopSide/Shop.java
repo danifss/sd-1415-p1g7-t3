@@ -2,6 +2,7 @@ package ShopSide;
 
 import Interfaces.RepositoryInterface;
 import Interfaces.ShopInterface;
+import Registry.Configurations;
 import java.rmi.RemoteException;
 
 /**

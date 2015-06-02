@@ -1,14 +1,13 @@
 package CraftmanSide;
 
+import Interfaces.ConfigurationsInterface;
 import Interfaces.FactoryInterface;
 import Interfaces.RepositoryInterface;
 import Interfaces.ShopInterface;
-import Registry.Configurations;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Scanner;
 
 
 /**
@@ -17,25 +16,18 @@ import java.util.Scanner;
  * @version 3.0
  */
 public class CraftmanMain {
+    /**
+    * Obter o objeto Repository, o objeto Shop e o objeto Factory por RMI usando o 
+    * host e o port que vem por argumento.
+    * 
+    * Iniciar os craftmans.
+    */
     public static void main(String[] args){
-        /**
-         * TODO: obter o objeto Repository, o objeto Shop e o objeto Factory por RMI usando o 
-         * host e o port que vem por argumento.
-         * 
-         * Iniciar os craftmans.
-         */
         
         /* get location of the generic registry service */
-//        Scanner in = new Scanner(System.in);
-        String rmiRegHostName = Configurations.RMIREGHOSTNAME;
-        int rmiRegPortNumb = Configurations.RMIREGPORTNUMB;
+        String rmiRegHostName = "localhost"; //Configurations.getRMIREGHOSTNAME();
+        int rmiRegPortNumb = 22170; //Configurations.getRMIREGPORTNUMB();
 
-//        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
-//        rmiRegHostName = in.nextLine();
-//        System.out.print("Número do port de escuta do serviço de registo? ");
-//        rmiRegPortNumb = in.nextInt();
-        
-        int nCraftmans = Configurations.getnCraftmans();
         
         /* look for the remote object by name in the remote host registry */
         String nameEntry;
@@ -45,6 +37,21 @@ public class CraftmanMain {
             registry = LocateRegistry.getRegistry(rmiRegHostName, rmiRegPortNumb);
         } catch (RemoteException e){
             System.out.println("RMI registry creation exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
+        // Get Configuration Object
+        nameEntry = "Configuration";
+        ConfigurationsInterface config = null;
+        try{
+            config = (ConfigurationsInterface) registry.lookup(nameEntry);
+        } catch (RemoteException e){
+            System.out.println("Configuration look up exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        } catch (NotBoundException e){
+            System.out.println("Configuration not bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -95,6 +102,15 @@ public class CraftmanMain {
         }
         
         
+        
+        int nCraftmans = 0;
+        try{
+            nCraftmans = config.getnCraftmans();
+        } catch(RemoteException e) {
+            System.out.println("Configuration getnCraftmans exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
         Craftman[] craftman = new Craftman[nCraftmans];
         //Initialization of Craftmans
         for (int i = 0; i < nCraftmans; i++)

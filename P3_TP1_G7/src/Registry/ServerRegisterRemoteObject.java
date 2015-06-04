@@ -19,6 +19,7 @@ public class ServerRegisterRemoteObject {
 
     /**
      * Main task.
+     * @param args
      */
     public static void main(String[] args){
         /* get location of the registry service */
@@ -30,11 +31,11 @@ public class ServerRegisterRemoteObject {
         
         System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
         rmiRegHostName = in.nextLine();
-        rmiRegPortNumb = 22170; //in.nextInt();
+        rmiRegPortNumb = 22170; //Integer.parseInt(args[1]); //in.nextInt();
         
         
-//        Configurations.setRMIREGHOSTNAME(rmiRegHostName);
-//        Configurations.setRMIREGPORTNUMB(rmiRegPortNumb);
+        //Configurations.setRMIREGHOSTNAME(rmiRegHostName);
+        //Configurations.setRMIREGPORTNUMB(rmiRegPortNumb);
         Configurations configs = new Configurations();
         
         String fName = "log.txt";
@@ -88,11 +89,7 @@ public class ServerRegisterRemoteObject {
             
             //Configurations.setConfigurations(rmiRegHostName, rmiRegPortNumb, fName,nCraftmans, nCustomers, nPrimeMaterialsInFactory, nInitialProductsInShop, nInitialPrimeMaterialsInStorage, nPrimeMaterialsByProduct, nMinPrimeMaterialsForRestock, nMaxProductsCollect);
             
-        } 
-//        else {
-//            // default values
-//            //Configurations.setConfigurations(rmiRegHostName, rmiRegPortNumb);
-//        }
+        }
         
         configs.setfName(fName);
         configs.setnCustomers(nCustomers);
@@ -115,7 +112,7 @@ public class ServerRegisterRemoteObject {
         /* instantiate a registration remote object and generate a stub for it */
         RegisterRemoteObject regEngine = new RegisterRemoteObject(rmiRegHostName, rmiRegPortNumb);
         RegisterInterface regEngineStub = null;
-        int listeningPort = configs.getREGISTERPORT();                   /* it should be set accordingly in each case */
+        int listeningPort = configs.getREGISTERPORT();
 
         try{
             regEngineStub = (RegisterInterface) UnicastRemoteObject.exportObject(regEngine, listeningPort);
@@ -144,15 +141,6 @@ public class ServerRegisterRemoteObject {
             System.exit(1);
         }
         System.out.println("RegisterRemoteObject object was registered!");
-        
-        
-
-        
-        
-        
-        
-        
-        
         
         
        

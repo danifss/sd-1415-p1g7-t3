@@ -16,9 +16,10 @@ public interface RepositoryInterface extends Remote {
      *
      * @param craftmanId Craftman id
      * @param state State of the Craftman
+     * @param v Local clock
      * @throws java.rmi.RemoteException
      */
-    void setCraftmanState(int craftmanId, int state) throws RemoteException;
+    void setCraftmanState(int craftmanId, int state, int[] v) throws RemoteException;
 
     /**
      * Change the number of products (accumulation) manufactured by the craftsman[i].
@@ -35,9 +36,10 @@ public interface RepositoryInterface extends Remote {
      *
      * @param customerId Customer id
      * @param state State of the Customer
+     * @param v Local clock
      * @throws java.rmi.RemoteException
      */
-    void setCustomerState(int customerId, int state)  throws RemoteException;
+    void setCustomerState(int customerId, int state, int[] v)  throws RemoteException;
 
 
     /**
@@ -54,9 +56,10 @@ public interface RepositoryInterface extends Remote {
      * Set Owner State.
      *
      * @param state State of the Owner
+     * @param v Local clock
      * @throws java.rmi.RemoteException
      */
-    void setOwnerState(int state) throws RemoteException;
+    void setOwnerState(int state, int[] v) throws RemoteException;
 
     // SHOP
     /**

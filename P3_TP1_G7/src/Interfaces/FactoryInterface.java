@@ -15,10 +15,10 @@ public interface FactoryInterface extends Remote {
      * The Craftman indicates that the owner has products to collect. He increments the number of
      * flagNProductsCall to tell that the Owner needs to come to the Factory flagNProductsCall times
      * to collect products.
-     *
+     * @return true if he really needs to contact the Owner
      * @throws java.rmi.RemoteException
      */
-    void batchReadyForTransfer() throws RemoteException;
+    boolean batchReadyForTransfer() throws RemoteException;
 
     /**
      * The Craftman verifies if he needs to contact the owner to collect products. Checks if the
@@ -116,9 +116,10 @@ public interface FactoryInterface extends Remote {
      * the total number of prime materials supplied and the number of times he came to the Factory.
      *
      * @param nPrimeMaterials Amount of prime materials to restock
+     * @param v Last clock
      * @throws java.rmi.RemoteException
      */
-    void replenishStock(int nPrimeMaterials) throws RemoteException;
+    void replenishStock(int nPrimeMaterials, int[] v) throws RemoteException;
 
     /**
      * Owner goes to factory to collect finished products. If he can collect all the products
@@ -131,4 +132,11 @@ public interface FactoryInterface extends Remote {
      * @throws java.rmi.RemoteException
      */
     int goToWorkshop() throws RemoteException;
+    
+    /**
+     * Get he last clock stored in the factory.
+     * @return last clock stored in the factory
+     * @throws java.rmi.RemoteException
+     */
+    int[] getClock() throws RemoteException;
 }

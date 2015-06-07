@@ -15,18 +15,18 @@ public interface ShopInterface extends Remote {
     /**
      * The Craftman indicates that the Owner can go to factory to collect products. He changes the
      * flag and wakes up the Owner.
-     *
+     * @param v Last clock
      * @throws java.rmi.RemoteException
      */
-    void batchReadyForTransfer() throws RemoteException;
+    void batchReadyForTransfer(int[] v) throws RemoteException;
 
     /**
      * The Craftman indicates that prime materials is needed in the Factory. He changes the flag and
      * wakes up the Owner.
-     *
+     * @param v Last clock
      * @throws java.rmi.RemoteException
      */
-    void primeMaterialsNeeded() throws RemoteException;
+    void primeMaterialsNeeded(int[] v) throws RemoteException;
 
     // CUSTOMER
     /**
@@ -40,10 +40,10 @@ public interface ShopInterface extends Remote {
      * The Customer leaves the Shop. If he his the last one leaving the Shop, wakes up the Owner
      * (important to Owner finish working, if he his waiting for all the Customers to buy products,
      * but the last one don't buy anything).
-     *
+     * @param v Last clock
      * @throws java.rmi.RemoteException
      */
-    void exitShop() throws RemoteException;
+    void exitShop(int[] v) throws RemoteException;
 
     /**
      * The Customer goes to the queue, and waits till the owner call him. When the owner calls a
@@ -51,9 +51,10 @@ public interface ShopInterface extends Remote {
      *
      * @param customerId Id of the customer that wants to buy something
      * @param nGoods Number of goods that the Customer wants to buy
+     * @param v Last clock
      * @throws java.rmi.RemoteException
      */
-    void iWantThis(int customerId, int nGoods) throws RemoteException;
+    void iWantThis(int customerId, int nGoods, int[] v) throws RemoteException;
 
     /**
      * The Customer sees if the door is open
@@ -143,11 +144,11 @@ public interface ShopInterface extends Remote {
     /**
      * The Owner address a Customer on the queue. The owner wakes up the first Customer in the
      * queue.
-     *
+     * @param v Last clock
      * @return id of the Customer that the Owner is attending
      * @throws java.rmi.RemoteException
      */
-    int addressACustomer() throws RemoteException;
+    int addressACustomer(int[] v) throws RemoteException;
 
     /**
      * The Owner services a customer. The Owner waits until the Customer updates the number of
@@ -162,9 +163,10 @@ public interface ShopInterface extends Remote {
      * The Owner says goodbye to the Customer he is attending. He updates the flag that indicates
      * that the purchase was made and wakes up the Customer. Then removes the Customer from the
      * queue.
+     * @param v Last clock
      * @throws java.rmi.RemoteException
      */
-    void sayGoodByeToCustomer() throws RemoteException;
+    void sayGoodByeToCustomer(int[] v) throws RemoteException;
     
     /**
      * Remove Customer from queue.
@@ -210,5 +212,33 @@ public interface ShopInterface extends Remote {
      * @throws java.rmi.RemoteException
      */
     boolean endOper() throws RemoteException;
+    
+    /**
+     * Get he last clock stored in the Shop.
+     * @return last clock stored in the Shop
+     * @throws java.rmi.RemoteException
+     */
+    int[] getClockCraftman() throws RemoteException;
 
+    /**
+     * Get he last clock stored in the shop of the Owner.
+     * @return last clock stored in the Shop
+     * @throws java.rmi.RemoteException
+     */
+    int[] getClockOwner() throws RemoteException;
+    
+    /**
+     * Get he last clock stored in the shop of the Customer.
+     * @return last clock stored in the Shop
+     * @throws java.rmi.RemoteException
+     */
+    int[] getClockCustomer() throws RemoteException;
+    
+    /**
+     * Get he last clock stored in the shop of the Customer the Owner is attending.
+     * @param customerId Id of the customer
+     * @return last clock stored in the Shop
+     * @throws java.rmi.RemoteException
+     */
+    int[] getClockCustomer(int customerId) throws RemoteException;
 }

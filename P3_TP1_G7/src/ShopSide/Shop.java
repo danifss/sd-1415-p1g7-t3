@@ -112,16 +112,60 @@ public class Shop implements ShopInterface {
      * @serial totalProducts
      */
     private final int totalProducts;
+    
+    /**
+     * Array with local clock with (1+nCustomers+nCraftmans) size from the Craftmans:
+     * i = 0 -> Owner
+     * i = 1 to nCustomers -> Customers
+     * i = nCustomers+1 to nCustomers+nCraftmans -> Craftmans
+     * @serial v_craftman Local clock
+     */
+    private int[] v_craftman;
+    
+    /**
+     * Array with local clock with (1+nCustomers+nCraftmans) size from the Owner:
+     * i = 0 -> Owner
+     * i = 1 to nCustomers -> Customers
+     * i = nCustomers+1 to nCustomers+nCraftmans -> Craftmans
+     * @serial v_owner Local clock
+     */
+    private int[] v_owner;
+    
+    /**
+     * Array with local clock with (1+nCustomers+nCraftmans) size from the Customer:
+     * i = 0 -> Owner
+     * i = 1 to nCustomers -> Customers
+     * i = nCustomers+1 to nCustomers+nCraftmans -> Craftmans
+     * @serial v_customer Local clock
+     */
+    private int[] v_customer;
+    
+    /**
+     * Array of customers with an array with local clock with (1+nCustomers+nCraftmans) size:
+     * i = 0 -> Owner
+     * i = 1 to nCustomers -> Customers
+     * i = nCustomers+1 to nCustomers+nCraftmans -> Craftmans
+     * Stores values from different customers because of the queue.
+     * @serial v_customer_queue Local clock
+     */
+    private int[][] v_customer_queue;
+    
+    /**
+     * Number of elements in the clock array.
+     * @serialField num_v Number of elements
+     */
+    private int num_v;
 
     /**
      * Create Monitor of the Shop.
      *
      * @param nInitialProductsInShop Initial number of products in the shop at the beginning
-     * @param nCustomer Number of customers
+     * @param nCustomer Number of customers (Also used as info to create clock array)
      * @param sharedInfo General repository
      * @param totalProducts Total number of products that the shop can have in this experience
+     * @param nCraftmans Number of Craftmans (Info to create clock array)
      */
-    public Shop(int nInitialProductsInShop, int nCustomer, int totalProducts, RepositoryInterface sharedInfo){
+    public Shop(int nInitialProductsInShop, int nCustomer, int totalProducts, RepositoryInterface sharedInfo, int nCraftmans){
         this.sharedInfo = sharedInfo;
         shopState = CLOSED;
         customerInsideShop = 0;
@@ -134,6 +178,23 @@ public class Shop implements ShopInterface {
         flagPurchaseMade = false;
         nProductsDelivered = nInitialProductsInShop;
         this.totalProducts = totalProducts;
+        
+        // Clock
+        num_v = 1 + nCustomer + nCraftmans;
+        v_craftman = new int[num_v];
+        v_owner = new int[num_v];
+        v_customer = new int[num_v];
+        v_customer_queue = new int[nCustomer][num_v];
+        for(int i = 0; i < num_v; i++){
+            v_craftman[i] = 0;
+            v_owner[i] = 0;
+            v_customer[i] = 0;
+        }
+        for(int i = 0; i < nCustomer; i++){
+            for(int j = 0; j < num_v; j++){
+                v_customer_queue[i][j] = 0;
+            }
+        }
     }
 
     /**
@@ -266,34 +327,47 @@ public class Shop implements ShopInterface {
     /**
      * The Craftman indicates that prime materials is needed in the Factory. He changes the flag and
      * wakes up the Owner.
+     * @param v Last clock
      */
     @Override
-    public synchronized void primeMaterialsNeeded() throws RemoteException{
+    public synchronized void primeMaterialsNeeded(int[] v) throws RemoteException{
         flagPrimeMaterialsNeeded = true;
         sharedInfo.setSupplyMaterialsToFactory(flagPrimeMaterialsNeeded);
+        for(int i = 0; i < num_v; i++){
+            if(v[i] > v_craftman[i]){
+                v_craftman[i] = v[i];
+            }
+        }
         notifyAll();
     }
 
     /**
      * The Craftman indicates that the Owner can go to factory to collect products. He changes the
      * flag and wakes up the Owner.
+     * @param v Last clock
      */
     @Override
-    public synchronized void batchReadyForTransfer() throws RemoteException{
+    public synchronized void batchReadyForTransfer(int[] v) throws RemoteException{
         flagBringProductsFromFactory += 1;
         sharedInfo.setTranfsProductsToShop(true);
+        for(int i = 0; i < num_v; i++){
+            if(v[i] > v_craftman[i]){
+                v_craftman[i] = v[i];
+            }
+        }
         notifyAll();
     }
 
     /**
      * The Owner address a Customer on the queue. The owner wakes up the first Customer in the
      * queue.
-     *
+     * @param v Last clock
      * @return id of the Customer that the Owner is attending
      */
     @Override
-    public synchronized int addressACustomer(){
+    public synchronized int addressACustomer(int[] v){
         attendingCustomerId = (int) this.queueCustomer.peek(); // retorna id do cliente
+        this.v_owner = v;
         notifyAll();
         return attendingCustomerId;
     }
@@ -319,10 +393,12 @@ public class Shop implements ShopInterface {
      * The Owner says goodbye to the Customer he is attending. He updates the flag that indicates
      * that the purchase was made and wakes up the Customer. Then removes the Customer from the
      * queue.
+     * @param v Last clock
      */
     @Override
-    public synchronized void sayGoodByeToCustomer(){
+    public synchronized void sayGoodByeToCustomer(int[] v){
         flagPurchaseMade = true;
+        this.v_owner = v;
         notifyAll();
         removeSitCustomer(attendingCustomerId);
         attendingCustomerId = -1;
@@ -377,14 +453,15 @@ public class Shop implements ShopInterface {
     /**
      * The Customer goes to the queue, and waits till the owner call him. When the owner calls a
      * Customer and he is in the front of the queue, he makes the purchase.
-     *
+     * @param v Last clock
      * @param customerId Id of the customer that wants to buy something
      * @param nGoods Number of goods that the Customer wants to buy
      */
     @Override
-    public synchronized void iWantThis(int customerId, int nGoods){
+    public synchronized void iWantThis(int customerId, int nGoods, int[] v){
 
         this.queueCustomer.write(customerId); // Goes to the queue
+        this.v_customer = v;
         notifyAll(); // wakes up the Owner
         while (attendingCustomerId != customerId){
             try{
@@ -396,6 +473,7 @@ public class Shop implements ShopInterface {
 
         flagPurchaseMade = false;
         nGoodsCustomerHave = nGoods;
+        this.v_customer_queue[customerId] = v;
         notifyAll();
         while (!flagPurchaseMade){
             try{
@@ -424,12 +502,14 @@ public class Shop implements ShopInterface {
      * The Customer leaves the Shop. If he his the last one leaving the Shop, wakes up the Owner
      * (important to Owner finish working, if he his waiting for all the Customers to buy products,
      * but the last one don't buy anything).
+     * @param v Last clock
      */
     @Override
-    public synchronized void exitShop() throws RemoteException{
+    public synchronized void exitShop(int[] v) throws RemoteException{
         customerInsideShop--;
         sharedInfo.setnCustomersInsideShop(customerInsideShop);
         if (!customersInTheShop()){
+            this.v_customer = v;
             notifyAll();
         }
     }
@@ -474,5 +554,42 @@ public class Shop implements ShopInterface {
     @Override
     public boolean endOper(){
         return nProductsDelivered == totalProducts && nGoodsInDisplay == 0;
+    }
+    
+    /**
+     * Get he last clock stored in the shop of the Craftman.
+     * @return last clock stored in the shop
+     */
+    @Override
+    public int[] getClockCraftman() throws RemoteException{
+        return v_craftman;
+    }
+    
+    /**
+     * Get he last clock stored in the shop of the Owner.
+     * @return last clock stored in the shop
+     */
+    @Override
+    public int[] getClockOwner() throws RemoteException{
+        return v_owner;
+    }
+    
+    /**
+     * Get he last clock stored in the shop of the Customer.
+     * @return last clock stored in the shop
+     */
+    @Override
+    public int[] getClockCustomer() throws RemoteException{
+        return v_customer;
+    }
+    
+    /**
+     * Get he last clock stored in the shop of the Customer the Owner is attending.
+     * @param customerId Id of the customer
+     * @return last clock stored in the shop
+     */
+    @Override
+    public int[] getClockCustomer(int customerId) throws RemoteException{
+        return v_customer_queue[customerId];
     }
 }

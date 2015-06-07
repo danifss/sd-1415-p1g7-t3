@@ -97,8 +97,18 @@ public class ServerShop {
             e.printStackTrace();
             System.exit(1);
         }
+        
+        int nCraftmans = 0;
+        try {
+            nCraftmans = config.getnCraftmans();
+        } catch(RemoteException e) {
+            System.out.println("Configuration getnCraftmans exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
         System.out.println("Total products: "+totalProducts);
-        Shop shop = new Shop(nInitialProductsInShop, nCustomer, totalProducts, repository);
+        Shop shop = new Shop(nInitialProductsInShop, nCustomer, totalProducts, repository, nCraftmans);
         ShopInterface shopStub = null;
 
         

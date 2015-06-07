@@ -99,10 +99,20 @@ public class CustomerMain {
             e.printStackTrace();
             System.exit(1);
         }
+        
+        int nCraftmans = 0;
+        try {
+            nCraftmans = config.getnCraftmans();
+        } catch(RemoteException e) {
+            System.out.println("Configuration getnCraftmans exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
         Customer[] customer = new Customer[nCustomers];
         //Initialization of Craftmans
         for (int i = 0; i < nCustomers; i++)
-            customer[i] = new Customer(i, repository, shop);
+            customer[i] = new Customer(i, repository, shop, nCustomers, nCraftmans);
         
         // Starting Craftmans
         for (int i = 0; i < nCustomers; i++)

@@ -63,6 +63,27 @@ public class Customer extends Thread implements CustomerInterface {
      * @serial nProductsCustomerHas
      */
     private int nProductsCustomer;
+    
+    /**
+     * Array with local clock with (1+nCustomers+nCraftmans) size:
+     * i = 0 -> Owner
+     * i = 1 to nCustomers -> Customers
+     * i = nCustomers+1 to nCustomers+nCraftmans -> Craftmans
+     * @serial v Local clock
+     */
+    private int[] v;
+    
+    /**
+     * Number of elements in the clock array.
+     * @serialField num_v Number of elements
+     */
+    private int num_v;
+    
+    /**
+     * Index of the first Customer in the clock Array
+     * @serialField first_v Index
+     */
+    private int first_v;
 
     /**
      * Create customer thread
@@ -70,13 +91,23 @@ public class Customer extends Thread implements CustomerInterface {
      * @param sharedInfo General repository
      * @param customerId customer identification
      * @param shop Shop
+     * @param nCustomers Number of Customers (Info to create clock array)
+     * @param nCraftmans Number of Craftmans (Info to create clock array)
      */
-    public Customer(int customerId, RepositoryInterface sharedInfo, ShopInterface shop){
+    public Customer(int customerId, RepositoryInterface sharedInfo, ShopInterface shop, int nCustomers, int nCraftmans){
         this.sharedInfo = sharedInfo;
         this.customerId = customerId;
         this.shop = shop;
         this.customerState = CARRYING_OUT_DAILY_CHORES;
         this.nGoodsBought = 0;
+        
+        // Clock
+        num_v = 1 + nCustomers + nCraftmans;
+        v = new int[num_v];
+        for(int i = 0; i < num_v; i++){
+            v[i] = 0;
+        }
+        first_v = 1;
     }
 
     /**
@@ -130,6 +161,7 @@ public class Customer extends Thread implements CustomerInterface {
      * Living normal life.
      */
     private void livingNormalLife(){
+        v[first_v+customerId]++;
         try{
             sleep((long) (1000 + 200 * Math.random()));
         } catch (InterruptedException e){
@@ -140,6 +172,7 @@ public class Customer extends Thread implements CustomerInterface {
      * Customer goes shopping. First, he will need to check if the door is open.
      */
     private void goShopping() throws RemoteException{
+        v[first_v+customerId]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -162,6 +195,7 @@ public class Customer extends Thread implements CustomerInterface {
      * If the shop is not open, he will try again later.
      */
     private void tryAgainLater() throws RemoteException{
+        v[first_v+customerId]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -178,6 +212,7 @@ public class Customer extends Thread implements CustomerInterface {
      * Customer enters the shop.
      */
     private void enterShop() throws RemoteException{
+        v[first_v+customerId]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -192,6 +227,7 @@ public class Customer extends Thread implements CustomerInterface {
      * @return Number of goods to buy
      */
     private void perusingAround() throws RemoteException{
+        v[first_v+customerId]++;
         try{
             sleep((long) (100 + 20 * Math.random()));
         } catch (InterruptedException e){
@@ -206,13 +242,21 @@ public class Customer extends Thread implements CustomerInterface {
      * @param goods
      */
     private void iWantThis() throws RemoteException{
+        v[first_v+customerId]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
         }
         setCustomerState(BUYING_SOME_GOODS);
 
-        shop.iWantThis(customerId, nProductsCustomer);
+        shop.iWantThis(customerId, nProductsCustomer, v);
+        int[] temp_v = shop.getClockOwner();
+        v[first_v+customerId]++;
+        for(int i = 0; i < num_v; i++){
+            if(temp_v[i] > v[i]){
+                v[i] = temp_v[i];
+            }
+        }
         nGoodsBought += nProductsCustomer;
         sharedInfo.setnGoodsByCustomer(customerId, nGoodsBought);
     }
@@ -221,11 +265,12 @@ public class Customer extends Thread implements CustomerInterface {
      * Customer leaves the Shop.
      */
     private void exitShop() throws RemoteException{
+        v[first_v+customerId]++;
         try{
             sleep((long) (100 + 25 * Math.random()));
         } catch (InterruptedException e){
         }
-        shop.exitShop();
+        shop.exitShop(v);
         setCustomerState(CARRYING_OUT_DAILY_CHORES);
     }
 
@@ -247,6 +292,6 @@ public class Customer extends Thread implements CustomerInterface {
      */
     private void setCustomerState(int customerState) throws RemoteException{
         this.customerState = customerState;
-        sharedInfo.setCustomerState(customerId, customerState);
+        sharedInfo.setCustomerState(customerId, customerState, v);
     }
 }

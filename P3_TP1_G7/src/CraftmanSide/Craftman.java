@@ -80,6 +80,27 @@ public class Craftman extends Thread implements CraftmanInterface {
      * @serialField nProduct
      */
     private int nProduct;
+    
+    /**
+     * Array with local clock with (1+nCustomers+nCraftmans) size:
+     * i = 0 -> Owner
+     * i = 1 to nCustomers -> Customers
+     * i = nCustomers+1 to nCustomers+nCraftmans -> Craftmans
+     * @serial v Local clock
+     */
+    private int[] v;
+    
+    /**
+     * Number of elements in the clock array.
+     * @serialField num_v Number of elements
+     */
+    private int num_v;
+    
+    /**
+     * Index of the first Craftman in the clock Array
+     * @serialField first_v Index
+     */
+    private int first_v;
 
     /**
      * Create Craftman thread
@@ -88,8 +109,10 @@ public class Craftman extends Thread implements CraftmanInterface {
      * @param factory Factory
      * @param shop Shop
      * @param info Repository
+     * @param nCustomers Number of Customers (Info to create clock array)
+     * @param nCraftmans Number of Craftmans (Info to create clock array)
      */
-    public Craftman(int craftmanId, FactoryInterface factory, ShopInterface shop, RepositoryInterface info){
+    public Craftman(int craftmanId, FactoryInterface factory, ShopInterface shop, RepositoryInterface info, int nCustomers, int nCraftmans){
         this.craftmanId = craftmanId;
         this.factory = factory;
         this.shop = shop;
@@ -98,6 +121,14 @@ public class Craftman extends Thread implements CraftmanInterface {
         nPrimeMaterials = 0;
         nProduct = 0;
         totalProduced = 0;
+        
+        // Clock
+        num_v = 1 + nCustomers + nCraftmans;
+        v = new int[num_v];
+        for(int i = 0; i < num_v; i++){
+            v[i] = 0;
+        }
+        first_v = nCustomers + 1;
     }
 
     /**
@@ -113,7 +144,6 @@ public class Craftman extends Thread implements CraftmanInterface {
                     case FETCHING_PRIME_MATERIALS:
                         if (factory.checkForRestock() && !factory.flagPrimeActivated()){
                             primeMaterialsNeeded();
-                            System.out.printf("Artesao %d\t- A pedir materia prima.\n", craftmanId);
                         } else{
                             if (checkForMaterials()){
                                 collectMaterials();
@@ -157,7 +187,19 @@ public class Craftman extends Thread implements CraftmanInterface {
             sleep((long) (20));
         } catch (InterruptedException e){
         }
-        return factory.checkForMaterials();
+        boolean check = factory.checkForMaterials();
+        int[] temp_v = factory.getClock();
+        boolean v_changed = false;
+        for(int i = 0; i < num_v; i++){
+            if(temp_v[i] > v[i]){
+                v_changed = true;
+                v[i] = temp_v[i];
+            }
+        }
+        if(v_changed){
+            v[first_v+craftmanId]++;
+        }
+        return check;
     }
 
     /**
@@ -165,6 +207,7 @@ public class Craftman extends Thread implements CraftmanInterface {
      * he has the number of prime materials collected.
      */
     private void collectMaterials() throws RemoteException{
+        v[first_v+craftmanId]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -176,6 +219,7 @@ public class Craftman extends Thread implements CraftmanInterface {
      * He prepares to produce a new piece.
      */
     private void prepareToProduce() throws RemoteException{
+        v[first_v+craftmanId]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -190,6 +234,7 @@ public class Craftman extends Thread implements CraftmanInterface {
      * produced.
      */
     private void shapingItUp() throws RemoteException{
+        v[first_v+craftmanId]++;
         try{
             sleep((long) (500 + 100 * Math.random()));
         } catch (InterruptedException e){
@@ -205,6 +250,7 @@ public class Craftman extends Thread implements CraftmanInterface {
      * moment.
      */
     private void goToStore() throws RemoteException{
+        v[first_v+craftmanId]++;
         try{
             sleep((long) (200 + 20 * Math.random()));
         } catch (InterruptedException e){
@@ -223,15 +269,18 @@ public class Craftman extends Thread implements CraftmanInterface {
             sleep((long) (20));
         } catch (InterruptedException e){
         }
-        setCraftmanState(CONTACTING_THE_ENTREPRENEUR);
-        factory.batchReadyForTransfer();
-        shop.batchReadyForTransfer();
+        if(factory.batchReadyForTransfer()){
+            v[first_v+craftmanId]++;
+            setCraftmanState(CONTACTING_THE_ENTREPRENEUR);
+            shop.batchReadyForTransfer(v);
+        }
     }
 
     /**
      * He goes back to work to produce a new product.
      */
     private void backToWork() throws RemoteException{
+        v[first_v+craftmanId]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -245,13 +294,15 @@ public class Craftman extends Thread implements CraftmanInterface {
      * doesn't do anything, if nobody done it, he goes to the Shop and contacts the Owner.
      */
     private void primeMaterialsNeeded() throws RemoteException{
+        v[first_v+craftmanId]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
         }
         if (factory.primeMaterialsNeeded()){
+            System.out.printf("Artesao %d\t- A pedir materia prima.\n", craftmanId);
             setCraftmanState(CONTACTING_THE_ENTREPRENEUR);
-            shop.primeMaterialsNeeded();
+            shop.primeMaterialsNeeded(v);
         }
     }
 
@@ -275,6 +326,6 @@ public class Craftman extends Thread implements CraftmanInterface {
      */
     private void setCraftmanState(int state) throws RemoteException{
         stateCraftman = state;
-        info.setCraftmanState(craftmanId, state);
+        info.setCraftmanState(craftmanId, state, v);
     }
 }

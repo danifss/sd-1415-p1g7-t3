@@ -105,6 +105,21 @@ public class Factory implements FactoryInterface {
      * @serial nProductsCall
      */
     private int flagNProductsCall;
+    
+    /**
+     * Array with local clock with (1+nCustomers+nCraftmans) size:
+     * i = 0 -> Owner
+     * i = 1 to nCustomers -> Customers
+     * i = nCustomers+1 to nCustomers+nCraftmans -> Craftmans
+     * @serial v Local clock
+     */
+    private int[] v;
+    
+    /**
+     * Number of elements in the clock array.
+     * @serialField num_v Number of elements
+     */
+    private int num_v;
 
     /**
      * Constructor of the Factory where Craftmans will work
@@ -117,8 +132,10 @@ public class Factory implements FactoryInterface {
      * @param nPrimePerProduct Number of prime materials needed to produce a new product
      * @param nPrimeRestock Minimum number of prime materials in stock to call owner to restock
      * @param nProductsCollect Maximum number of finished products that the owner can collect
+     * @param nCustomers Number of Customers (Info to create clock array)
+     * @param nCraftmans Number of Craftmans (Info to create clock array)
      */
-    public Factory(RepositoryInterface info, int nPrimeMaterialsInFactory, int nTotalPrime, int nPrimePerProduct, int nPrimeRestock, int nProductsCollect){
+    public Factory(RepositoryInterface info, int nPrimeMaterialsInFactory, int nTotalPrime, int nPrimePerProduct, int nPrimeRestock, int nProductsCollect, int nCustomers, int nCraftmans){
         // Repository
         this.info = info;
 
@@ -137,6 +154,13 @@ public class Factory implements FactoryInterface {
         this.nProductsCollect = nProductsCollect;
         flagPrimeCall = false;
         flagNProductsCall = 0;
+        
+        // Clock
+        num_v = 1 + nCustomers + nCraftmans;
+        v = new int[num_v];
+        for(int i = 0; i < num_v; i++){
+            v[i] = 0;
+        }
     }
 
     /**
@@ -219,10 +243,15 @@ public class Factory implements FactoryInterface {
      * The Craftman indicates that the owner has products to collect. He increments the number of
      * flagNProductsCall to tell that the Owner needs to come to the Factory flagNProductsCall times
      * to collect products.
+     * @return true if he really needs to contact the Owner
      */
     @Override
-    public synchronized void batchReadyForTransfer(){
-        flagNProductsCall += 1;
+    public synchronized boolean batchReadyForTransfer(){
+        if(checkContactProduct()){
+            flagNProductsCall += 1;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -301,11 +330,11 @@ public class Factory implements FactoryInterface {
     /**
      * Owner brings prime materials. He increases the number of prime materials in Factory, and also
      * the total number of prime materials supplied and the number of times he came to the Factory.
-     *
+     * @param v Last clock
      * @param nPrimeMaterials Amount of prime materials to restock
      */
     @Override
-    public synchronized void replenishStock(int nPrimeMaterials) throws RemoteException{
+    public synchronized void replenishStock(int nPrimeMaterials, int[] v) throws RemoteException{
         nPrimeMaterialsInFactory += nPrimeMaterials;
         nPrimeMaterialsSupplied += nPrimeMaterials;
         nSuppliedTimes += 1;
@@ -316,17 +345,26 @@ public class Factory implements FactoryInterface {
         info.setnSuppliedTimes(nSuppliedTimes);
         info.setnPrimeMaterialsSupplied(nPrimeMaterialsSupplied);
 
+        this.v = v;
         notifyAll();
     }
 
     /**
      * Checks if the all the prime materials from the storage were supplied. This function helps the
      * Craftman to know if he can stop working.
-     *
      * @return true if there is no more prime materials in the storage
      */
     @Override
-    public boolean endOfPrimeMaterials(){
+    public boolean endOfPrimeMaterials() throws RemoteException{
         return (nPrimeMaterialsSupplied == nTotalPrime);
+    }
+    
+    /**
+     * Get he last clock stored in the factory.
+     * @return last clock stored in the factory
+     */
+    @Override
+    public int[] getClock() throws RemoteException{
+        return v;
     }
 }

@@ -100,7 +100,26 @@ public class ServerFactory {
             e.printStackTrace();
             System.exit(1);
         }
-        Factory factory = new Factory(repository, nPrimeMaterialsInFactory, nTotalPrime, nPrimePerProduct, nPrimeRestock, nProductsCollect);
+        
+        int nCustomers = 0;
+        try {
+            nCustomers = config.getnCustomers();
+        } catch(RemoteException e) {
+            System.out.println("Configuration getnCustomers exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
+        int nCraftmans = 0;
+        try {
+            nCraftmans = config.getnCraftmans();
+        } catch(RemoteException e) {
+            System.out.println("Configuration getnCraftmans exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
+        Factory factory = new Factory(repository, nPrimeMaterialsInFactory, nTotalPrime, nPrimePerProduct, nPrimeRestock, nProductsCollect, nCustomers, nCraftmans);
         FactoryInterface factoryStub = null;
         
         try{

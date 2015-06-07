@@ -116,6 +116,21 @@ public class Repository implements RepositoryInterface {
     private int nSuppliedTimes;
     private int nPrimeMaterialsSupplied;
     private int nProductsManufactured;
+    
+    /**
+     * Array with local clock with (1+nCustomers+nCraftmans) size:
+     * i = 0 -> Owner
+     * i = 1 to nCustomers -> Customers
+     * i = nCustomers+1 to nCustomers+nCraftmans -> Craftmans
+     * @serial v Local clock
+     */
+    private int[] v;
+    
+    /**
+     * Number of elements in the clock array.
+     * @serialField num_v Number of elements
+     */
+    private int num_v;
 
     /**
      * Name of the logging file.
@@ -171,6 +186,13 @@ public class Repository implements RepositoryInterface {
         this.nGoodsInDisplay = 10;
         this.transfProductsToShop = false;
         this.supplyMaterialsToFactory = false;
+        
+        // Initialization of the local clock
+        num_v = 1 + this.nCustomer + this.nCraftman;
+        v = new int[num_v];
+        for(int i = 0; i < num_v; i++){
+            v[i] = 0;
+        }
 
         // Initialization of the logging file
         if ((fName != null) && !("".equals(fName))){
@@ -201,8 +223,20 @@ public class Repository implements RepositoryInterface {
                 line1 += String.format("%9s", "CRAFT_" + i);
                 line2 += String.format("%9s", "Stat PP");
             }
-            line1 += "            SHOP                  WORKSHOP";
+            line1 += "            SHOP                  WORKSHOP        ";
             line2 += "    Stat NCI NPI PCR PMR    APMI NPI NSPM TAPM TNP";
+            
+            line1 += String.format("%12s", "V");
+            line2 += " ";
+            line2 += String.format("%4s", "own0");
+            for(int i = 0; i< nCustomer; i++){
+                line2 += " ";
+                line2 += String.format("%4s", "cus"+i);
+            }
+            for(int i = 0; i< nCustomer; i++){
+                line2 += " ";
+                line2 += String.format("%4s", "cra"+i);
+            }
             log.println(line1);
             log.println(line2);
 
@@ -337,7 +371,12 @@ public class Repository implements RepositoryInterface {
             lineStatus += String.format("%4d", nPrimeMaterialsSupplied);
             lineStatus += " ";
             lineStatus += String.format("%3d", nProductsManufactured);
-
+            
+            for(int i = 0; i < num_v; i++){
+                lineStatus += " ";
+                lineStatus += String.format("%4d", v[i]);
+            }
+            
             log.println(lineStatus);
             log.close();
 
@@ -355,8 +394,9 @@ public class Repository implements RepositoryInterface {
      * @param state State of the Owner
      */
     @Override
-    public synchronized void setOwnerState(int state){
+    public synchronized void setOwnerState(int state, int[] v){
         this.stateOwner = state;
+        this.v = v;
         reportStatus();
     }
 
@@ -368,8 +408,9 @@ public class Repository implements RepositoryInterface {
      * @param state State of the Customer
      */
     @Override
-    public synchronized void setCustomerState(int customerId, int state){
+    public synchronized void setCustomerState(int customerId, int state, int[] v){
         this.stateCustomer[customerId] = state;
+        this.v = v;
         reportStatus();
     }
 
@@ -392,8 +433,9 @@ public class Repository implements RepositoryInterface {
      * @param state State of the Craftman
      */
     @Override
-    public synchronized void setCraftmanState(int craftmanId, int state){
+    public synchronized void setCraftmanState(int craftmanId, int state, int[] v){
         this.stateCraftman[craftmanId] = state;
+        this.v = v;
         reportStatus();
     }
 
@@ -417,7 +459,6 @@ public class Repository implements RepositoryInterface {
     @Override
     public synchronized void setShopState(int state){
         this.stateShop = state;
-        reportStatus();
     }
 
     /**

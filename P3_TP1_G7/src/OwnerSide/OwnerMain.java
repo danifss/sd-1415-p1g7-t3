@@ -1,5 +1,6 @@
 package OwnerSide;
 
+import Interfaces.ConfigurationsInterface;
 import Interfaces.FactoryInterface;
 import Interfaces.RepositoryInterface;
 import Interfaces.ShopInterface;
@@ -42,6 +43,21 @@ public class OwnerMain {
             registry = LocateRegistry.getRegistry(rmiRegHostName, rmiRegPortNumb);
         } catch (RemoteException e){
             System.out.println("RMI registry creation exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
+        // Get Configuration Object
+        nameEntry = "Configuration";
+        ConfigurationsInterface config = null;
+        try{
+            config = (ConfigurationsInterface) registry.lookup(nameEntry);
+        } catch (RemoteException e){
+            System.out.println("Configuration look up exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        } catch (NotBoundException e){
+            System.out.println("Configuration not bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -106,8 +122,26 @@ public class OwnerMain {
             System.exit(1);
         }
         
+        int nCustomers = 0;
+        try {
+            nCustomers = config.getnCustomers();
+        } catch(RemoteException e) {
+            System.out.println("Configuration getnCustomers exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
+        int nCraftmans = 0;
+        try {
+            nCraftmans = config.getnCraftmans();
+        } catch(RemoteException e) {
+            System.out.println("Configuration getnCraftmans exception: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
         //Initialization of Owner
-        Owner owner = new Owner(repository, factory, shop, storage);
+        Owner owner = new Owner(repository, factory, shop, storage, nCustomers, nCraftmans);
         
         // Starting Owner
         owner.start();

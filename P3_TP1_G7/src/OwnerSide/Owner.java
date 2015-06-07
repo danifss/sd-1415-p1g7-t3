@@ -82,6 +82,21 @@ public class Owner extends Thread implements OwnerInterface {
      * @serial attendingCustomerId
      */
     private int attendingCustomerId;
+    
+    /**
+     * Array with local clock with (1+nCustomers+nCraftmans) size:
+     * i = 0 -> Owner
+     * i = 1 to nCustomers -> Customers
+     * i = nCustomers+1 to nCustomers+nCraftmans -> Craftmans
+     * @serial v Local clock
+     */
+    private int[] v;
+    
+    /**
+     * Number of elements in the clock array.
+     * @serialField num_v Number of elements
+     */
+    private int num_v;
 
     /**
      * Create owner thread.
@@ -90,14 +105,23 @@ public class Owner extends Thread implements OwnerInterface {
      * @param factory Factory
      * @param shop Shop
      * @param storage Storage
+     * @param nCustomers Number of Customers (Info to create clock array)
+     * @param nCraftmans Number of Craftmans (Info to create clock array)
      */
-    public Owner(RepositoryInterface sharedInfo, FactoryInterface factory, ShopInterface shop, StorageInterface storage){
+    public Owner(RepositoryInterface sharedInfo, FactoryInterface factory, ShopInterface shop, StorageInterface storage, int nCustomers, int nCraftmans){
         this.sharedInfo = sharedInfo;
         this.factory = factory;
         this.shop = shop;
         this.storage = storage;
         ownerState = OPENING_THE_SHOP;
         attendingCustomerId = -1;
+        
+        // Clock
+        num_v = 1 + nCustomers + nCraftmans;
+        v = new int[num_v];
+        for(int i = 0; i < num_v; i++){
+            v[i] = 0;
+        }
     }
 
     /**
@@ -172,6 +196,7 @@ public class Owner extends Thread implements OwnerInterface {
      * Owner prepares to work, changing his state to waiting for the next task.
      */
     private void prepareToWork() throws RemoteException{
+        v[0]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -185,17 +210,45 @@ public class Owner extends Thread implements OwnerInterface {
      * @return action he will do
      */
     private int appraiseSit() throws RemoteException{
+        v[0]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
         }
-        return shop.appraiseSit();
+        int temp = shop.appraiseSit();
+        if(temp == NEED_TO_CLOSE_SHOP){
+            int[] temp_v = shop.getClockCraftman();
+            boolean v_changed = false;
+            for(int i = 0; i < num_v; i++){
+                if(temp_v[i] > v[i]){
+                    v_changed = true;
+                    v[i] = temp_v[i];
+                }
+            }
+            if(v_changed){
+                v[0]++;
+            }
+        }else if(temp == ADDRESS_CUSTOMER){
+            int[] temp_v = shop.getClockCustomer();
+            boolean v_changed = false;
+            for(int i = 0; i < num_v; i++){
+                if(temp_v[i] > v[i]){
+                    v_changed = true;
+                    v[i] = temp_v[i];
+                }
+            }
+            if(v_changed){
+                v[0]++;
+            }
+        }
+        return temp;
     }
 
     /**
      * Owner closes the door of the Shop.
      */
     private void closeTheDoor() throws RemoteException{
+        v[0]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -218,6 +271,7 @@ public class Owner extends Thread implements OwnerInterface {
      * Owner prepares to go to the Factory.
      */
     private void prepareToLeave() throws RemoteException{
+        v[0]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -229,23 +283,33 @@ public class Owner extends Thread implements OwnerInterface {
      * Owner prepares to address a customer.
      */
     private void addressACustomer() throws RemoteException{
+        v[0]++;
         try{
             sleep((long) (100));
         } catch (InterruptedException e){
         }
         setOwnerState(ATTENDING_A_CUSTOMER);
-        attendingCustomerId = shop.addressACustomer(); // atende cliente seguinte
+        attendingCustomerId = shop.addressACustomer(v); // atende cliente seguinte
     }
 
     /**
      * Owner services a Customer. He will take more time if the Customer is buying more products.
      */
     private void serviceCustomer() throws RemoteException{
+        v[0]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
         }
         int n = shop.serviceCustomer();
+        int[] temp_v = shop.getClockCustomer(attendingCustomerId);
+        v[0]++;
+        for(int i = 0; i < num_v; i++){
+            if(temp_v[i] > v[i]){
+                v[i] = temp_v[i];
+            }
+        }
+        
         int i = 0;
         while (i < n){
             //Debug
@@ -262,11 +326,12 @@ public class Owner extends Thread implements OwnerInterface {
      * Owner finish the purchase and say goodbye to the Customer. Then he wait for the next task.
      */
     private void sayGoodByeToCustomer() throws RemoteException{
+        v[0]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
         }
-        shop.sayGoodByeToCustomer();
+        shop.sayGoodByeToCustomer(v);
         if (shop.isShopStillOpen()){
             closeTheDoor();
         }
@@ -278,6 +343,7 @@ public class Owner extends Thread implements OwnerInterface {
      * display.
      */
     private void goToWorkShop() throws RemoteException{
+        v[0]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -294,6 +360,7 @@ public class Owner extends Thread implements OwnerInterface {
      * Owner goes to the storage to collect some prime materials.
      */
     private void visitSuppliers() throws RemoteException {
+        v[0]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -317,6 +384,7 @@ public class Owner extends Thread implements OwnerInterface {
      * Owner returns to the shop and opens the door.
      */
     private void returnToShop() throws RemoteException{
+        v[0]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
@@ -330,13 +398,14 @@ public class Owner extends Thread implements OwnerInterface {
      * Owner delivers prime materials to the Factory.
      */
     private void replenishStock() throws RemoteException{
+        v[0]++;
         try{
             sleep((long) (20));
         } catch (InterruptedException e){
         }
         setOwnerState(DELIVERING_PRIME_MATERIALS);
         shop.replenishStock();
-        factory.replenishStock(nPrimeMaterials);
+        factory.replenishStock(nPrimeMaterials, v);
         nPrimeMaterials = 0;
     }
 
@@ -358,6 +427,6 @@ public class Owner extends Thread implements OwnerInterface {
      */
     private void setOwnerState(int ownerState) throws RemoteException{
         this.ownerState = ownerState;
-        sharedInfo.setOwnerState(ownerState);
+        sharedInfo.setOwnerState(ownerState, v);
     }
 }

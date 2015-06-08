@@ -25,7 +25,8 @@ public class CraftmanMain {
     public static void main(String[] args){
         
         /* get location of the generic registry service */
-        String rmiRegHostName = "localhost"; //Configurations.getRMIREGHOSTNAME();
+        //String rmiRegHostName = "localhost"; //Configurations.getRMIREGHOSTNAME();
+        String rmiRegHostName = "192.168.8.171";
         int rmiRegPortNumb = 22170; //Configurations.getRMIREGPORTNUMB();
 
         

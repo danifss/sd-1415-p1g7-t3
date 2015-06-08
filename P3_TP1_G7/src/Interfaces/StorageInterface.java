@@ -15,7 +15,7 @@ public interface StorageInterface extends Remote {
      * See if the storage has prime materials.
      *
      * @return true if the storage has prime materials
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean isPrimeMaterialsAvailabe() throws RemoteException;
 
@@ -27,7 +27,7 @@ public interface StorageInterface extends Remote {
      * available.
      *
      * @return Number of prime materials collected
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int visitSuppliers() throws RemoteException;
 

@@ -16,7 +16,7 @@ public interface ShopInterface extends Remote {
      * The Craftman indicates that the Owner can go to factory to collect products. He changes the
      * flag and wakes up the Owner.
      * @param v Last clock
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void batchReadyForTransfer(int[] v) throws RemoteException;
 
@@ -24,7 +24,7 @@ public interface ShopInterface extends Remote {
      * The Craftman indicates that prime materials is needed in the Factory. He changes the flag and
      * wakes up the Owner.
      * @param v Last clock
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void primeMaterialsNeeded(int[] v) throws RemoteException;
 
@@ -32,7 +32,7 @@ public interface ShopInterface extends Remote {
     /**
      * The customer enters the shop.
      *
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void enterShop() throws RemoteException;
 
@@ -41,7 +41,7 @@ public interface ShopInterface extends Remote {
      * (important to Owner finish working, if he his waiting for all the Customers to buy products,
      * but the last one don't buy anything).
      * @param v Last clock
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void exitShop(int[] v) throws RemoteException;
 
@@ -52,7 +52,7 @@ public interface ShopInterface extends Remote {
      * @param customerId Id of the customer that wants to buy something
      * @param nGoods Number of goods that the Customer wants to buy
      * @param v Last clock
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void iWantThis(int customerId, int nGoods, int[] v) throws RemoteException;
 
@@ -60,7 +60,7 @@ public interface ShopInterface extends Remote {
      * The Customer sees if the door is open
      *
      * @return True if the shop is OPEN
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean isDoorOpen() throws RemoteException;
 
@@ -70,7 +70,7 @@ public interface ShopInterface extends Remote {
      * returns his remainder.
      *
      * @return number of goods to buy
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int perusingAround() throws RemoteException;
     
@@ -80,13 +80,13 @@ public interface ShopInterface extends Remote {
      * Set present Shop state.
      *
      * @param state State of the Shop
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void setShopState(int state) throws RemoteException;
     
     /**
      * Owner opens the door. The state of the Shop is changed to OPEN.
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void openTheDoor() throws RemoteException;
 
@@ -94,7 +94,7 @@ public interface ShopInterface extends Remote {
      * Check if the factory needs prime materials.
      *
      * @return true if the Factory needs prime materials
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean isSupplyMaterialsToFactory() throws RemoteException;
 
@@ -102,7 +102,7 @@ public interface ShopInterface extends Remote {
      * Check if the owner can collect products.
      *
      * @return true if he needs to go to the factory
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean isTranfsProductsToShop() throws RemoteException;
 
@@ -114,14 +114,14 @@ public interface ShopInterface extends Remote {
      * the Owner close the Shop.
      *
      * @return action to do
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int appraiseSit() throws RemoteException;
 
     /**
      * Owner closes the door. If the shop has Customers inside, the shop change his state to
      * STILL_OPEN, if the shop doesn't have Customers, the shop change his state to CLOSED.
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void closeTheDoor() throws RemoteException;
 
@@ -129,7 +129,7 @@ public interface ShopInterface extends Remote {
      * See if there is customers inside the shop.
      *
      * @return true if the number of Customers inside the shop is greater than 0
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean customersInTheShop() throws RemoteException;
     
@@ -137,7 +137,7 @@ public interface ShopInterface extends Remote {
      * See if the Queue has customers.
      *
      * @return true if the queue has customers
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean customerInTheQueue() throws RemoteException;
 
@@ -146,7 +146,7 @@ public interface ShopInterface extends Remote {
      * queue.
      * @param v Last clock
      * @return id of the Customer that the Owner is attending
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int addressACustomer(int[] v) throws RemoteException;
 
@@ -155,7 +155,7 @@ public interface ShopInterface extends Remote {
      * products he wants to buy.
      *
      * @return number of goods that the customer is buying
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int serviceCustomer() throws RemoteException;
 
@@ -164,7 +164,7 @@ public interface ShopInterface extends Remote {
      * that the purchase was made and wakes up the Customer. Then removes the Customer from the
      * queue.
      * @param v Last clock
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void sayGoodByeToCustomer(int[] v) throws RemoteException;
     
@@ -172,7 +172,7 @@ public interface ShopInterface extends Remote {
      * Remove Customer from queue.
      *
      * @param customerId id
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void removeSitCustomer(int customerId) throws RemoteException;
 
@@ -180,13 +180,13 @@ public interface ShopInterface extends Remote {
      * See if the shop is on state STILL_OPEN.
      *
      * @return true if the shop is STILL_OPEN
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean isShopStillOpen() throws RemoteException;
 
     /**
      * The owner goes to the Factory to collect products.
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void goToWorkshop() throws RemoteException;
 
@@ -194,13 +194,13 @@ public interface ShopInterface extends Remote {
      * Update the number of products that the shop is selling.
      *
      * @param goods Number of products to add to the number of products in display
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void addnGoodsInDisplay(int goods) throws RemoteException;
 
     /**
      * Owner goes to Factory to restock prime materials.
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void replenishStock() throws RemoteException;
 
@@ -209,28 +209,28 @@ public interface ShopInterface extends Remote {
      * Shop, and all the products are sold.
      *
      * @return true if they can stop working
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean endOper() throws RemoteException;
     
     /**
      * Get he last clock stored in the Shop.
      * @return last clock stored in the Shop
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int[] getClockCraftman() throws RemoteException;
 
     /**
      * Get he last clock stored in the shop of the Owner.
      * @return last clock stored in the Shop
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int[] getClockOwner() throws RemoteException;
     
     /**
      * Get he last clock stored in the shop of the Customer.
      * @return last clock stored in the Shop
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int[] getClockCustomer() throws RemoteException;
     
@@ -238,7 +238,7 @@ public interface ShopInterface extends Remote {
      * Get he last clock stored in the shop of the Customer the Owner is attending.
      * @param customerId Id of the customer
      * @return last clock stored in the Shop
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int[] getClockCustomer(int customerId) throws RemoteException;
 }

@@ -26,7 +26,8 @@ public class OwnerMain {
         
         /* get location of the generic registry service */
 //        Scanner in = new Scanner(System.in);
-        String rmiRegHostName = "localhost"; //Configurations.getRMIREGHOSTNAME();
+        //String rmiRegHostName = "localhost"; //Configurations.getRMIREGHOSTNAME();
+        String rmiRegHostName = "192.168.8.171";
         int rmiRegPortNumb = 22170; //Configurations.getRMIREGPORTNUMB();
 
 //        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");

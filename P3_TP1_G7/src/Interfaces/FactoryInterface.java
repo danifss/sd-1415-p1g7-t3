@@ -16,7 +16,7 @@ public interface FactoryInterface extends Remote {
      * flagNProductsCall to tell that the Owner needs to come to the Factory flagNProductsCall times
      * to collect products.
      * @return true if he really needs to contact the Owner
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean batchReadyForTransfer() throws RemoteException;
 
@@ -27,7 +27,7 @@ public interface FactoryInterface extends Remote {
      * last product. If one of the conditions are true, he needs to contact the Owner.
      *
      * @return true if he needs to contact
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean checkContactProduct() throws RemoteException;
 
@@ -39,7 +39,7 @@ public interface FactoryInterface extends Remote {
      * working
      *
      * @return true if has materials
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean checkForMaterials() throws RemoteException;
 
@@ -51,7 +51,7 @@ public interface FactoryInterface extends Remote {
      * at the beginning.
      *
      * @return true if needs to restock
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean checkForRestock() throws RemoteException;
 
@@ -61,7 +61,7 @@ public interface FactoryInterface extends Remote {
      * the number of pieces collected in the number of prime materials available in the Factory.
      *
      * @return number of collected prime materials
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int collectMaterials() throws RemoteException;
 
@@ -70,7 +70,7 @@ public interface FactoryInterface extends Remote {
      * Craftman to know if he can stop working.
      *
      * @return true if there is no more prime materials in the storage
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean endOfPrimeMaterials() throws RemoteException;
 
@@ -78,7 +78,7 @@ public interface FactoryInterface extends Remote {
      * The Craftman sees if someone already contacted the owner to restock prime materials.
      *
      * @return true if someone already contacted the owner
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean flagPrimeActivated() throws RemoteException;
 
@@ -86,7 +86,7 @@ public interface FactoryInterface extends Remote {
      * Craftman sees how many prime materials needs to produce a new product
      *
      * @return number of prime materials needed per products
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int getnPrimePerProduct() throws RemoteException;
 
@@ -97,7 +97,7 @@ public interface FactoryInterface extends Remote {
      *
      * @param nProd Number of products that the Craftman has
      * @return number of products the Craftman stored
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int goToStore(int nProd) throws RemoteException;
 
@@ -106,7 +106,7 @@ public interface FactoryInterface extends Remote {
      * ensure that none of the Craftmans already contacted the Owner.
      *
      * @return true if he contacted the owner
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     boolean primeMaterialsNeeded() throws RemoteException;
 
@@ -117,7 +117,7 @@ public interface FactoryInterface extends Remote {
      *
      * @param nPrimeMaterials Amount of prime materials to restock
      * @param v Last clock
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     void replenishStock(int nPrimeMaterials, int[] v) throws RemoteException;
 
@@ -129,14 +129,14 @@ public interface FactoryInterface extends Remote {
      * number of products collected. He also decreases the flagNProductsCall.
      *
      * @return number of products collected
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int goToWorkshop() throws RemoteException;
     
     /**
      * Get he last clock stored in the factory.
      * @return last clock stored in the factory
-     * @throws java.rmi.RemoteException
+     * @throws java.rmi.RemoteException Remote Exception
      */
     int[] getClock() throws RemoteException;
 }

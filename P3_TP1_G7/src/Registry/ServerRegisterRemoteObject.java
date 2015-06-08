@@ -29,8 +29,9 @@ public class ServerRegisterRemoteObject {
 
         System.out.println("\tConfiguration Server of problem 3: Aveiro Handicraft\n");
         
-        System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
-        rmiRegHostName = in.nextLine();
+        /*System.out.print("Nome do nó de processamento onde está localizado o serviço de registo? ");
+        rmiRegHostName = in.nextLine();*/
+        rmiRegHostName = "192.168.8.171";
         rmiRegPortNumb = 22170; //Integer.parseInt(args[1]); //in.nextInt();
         
         

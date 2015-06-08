@@ -1,4 +1,4 @@
-java -Djava.rmi.server.codebase="http://ruib-laptop1.ieeta.pt/ruib/classes/"\
+java -Djava.rmi.server.codebase="http://l040101-ws01.ua.pt/sd0107/classes/"\
      -Djava.rmi.server.useCodebaseOnly=true\
      -Djava.security.policy=java.policy\
      FactorySide.ServerFactory
